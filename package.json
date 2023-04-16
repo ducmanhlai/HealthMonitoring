@@ -10,8 +10,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "axois": "^0.0.1-security",
     "react": "18.2.0",
-    "react-native": "0.71.6"
+    "react-native": "0.71.6",
+    "react-native-charts-wrapper": "^0.5.11",
+    "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
