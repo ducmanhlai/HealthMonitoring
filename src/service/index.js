@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const request = axios.create({
   baseURL: 'https://localhost:3000/',
-
   responseType: 'json',
   withCredentials: true,
 });
