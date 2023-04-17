@@ -10,9 +10,16 @@
     "test": "jest"
   },
   "dependencies": {
-    "axois": "^0.0.1-security",
+    "@react-native-async-storage/async-storage": "^1.18.1",
+    "form-data": "^4.0.0",
+    "install": "^0.13.0",
+    "npm": "^9.6.4",
     "react": "18.2.0",
     "react-native": "0.71.6",
+    "react-native-date-picker": "^4.2.10",
+    "react-native-image-picker": "^5.3.1",
+    "react-native-paper": "^5.6.0",
+    "axois": "^0.0.1-security",
     "react-native-charts-wrapper": "^0.5.11",
     "react-native-vector-icons": "^9.2.0"
   },
