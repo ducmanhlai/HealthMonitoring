@@ -14,6 +14,24 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 function LoginScreen({navigation}) {
   const [seePassword, setSeepassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const checkData = () => {
+    if (email.trim().length == 0) {
+      ToastAndroid.show('Không được để trống email!', ToastAndroid.SHORT);
+      return false;
+    }
+    if (password.trim().length == 0) {
+      ToastAndroid.show('Không được để trống password!', ToastAndroid.SHORT);
+      return false;
+    }
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(email) !== true) {
+      ToastAndroid.show('Email không hợp lệ!', ToastAndroid.SHORT);
+      return false;
+    }
+    return true;
+  };
   return (
     <SafeAreaView>
       <View style={styles.header}>
@@ -27,15 +45,20 @@ function LoginScreen({navigation}) {
       <View style={styles.viewInput}>
         <View style={styles.viewIconInput}>
           <Fontisto style={styles.iconInput} name="email" size={20} />
-          <TextInput style={styles.input} placeholder="Email" />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            onChangeText={newText => setEmail(newText)}
+          />
         </View>
         <View style={styles.lineInput} />
         <View style={styles.viewIconInput}>
           <FontAwesome5 style={styles.iconInput} name="unlock-alt" size={20} />
           <TextInput
             style={styles.input}
-            secureTextEntry={seePassword}
+            secureTextEntry={!seePassword}
             placeholder="Mật khẩu"
+            onChangeText={newText => setPassword(newText)}
           />
 
           <TouchableOpacity onPress={() => setSeepassword(!seePassword)}>
@@ -53,16 +76,18 @@ function LoginScreen({navigation}) {
         <View style={styles.lineInput} />
       </View>
       <View style={styles.viewBtnLogin}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => checkData()}>
           <View style={styles.btnLogin}>
             <Text style={styles.txtLogin}>Đăng nhập</Text>
           </View>
         </TouchableOpacity>
         <View style={styles.viewTxtOther}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ProfileRegisterScreen')}>
             <Text style={styles.txtOther}>Đăng ký</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ForgotPasswordScreen')}>
             <Text style={styles.txtOther}>Quên mật khẩu</Text>
           </TouchableOpacity>
         </View>

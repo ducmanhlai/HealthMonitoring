@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     borderColor: COLOR.black,
     backgroundColor: COLOR.white,
     marginRight: 3,
+    marginLeft: 3,
   },
   barHead2: {
     width: 44,
@@ -40,6 +41,7 @@ const styles = StyleSheet.create({
     borderColor: COLOR.black,
     backgroundColor: COLOR.pink,
     marginLeft: 3,
+    marginRight: 3,
   },
   viewInput: {
     marginTop: 100,
@@ -113,6 +115,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderWidth: 2,
     borderColor: COLOR.black,
+    backgroundColor: COLOR.primary,
   },
   viewInputInfor: {
     width: width,

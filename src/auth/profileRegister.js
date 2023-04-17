@@ -17,11 +17,16 @@ import {RadioButton} from 'react-native-paper';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import DatePicker from 'react-native-date-picker';
 import {uploadImage} from '../service/uploadImage';
+import moment from 'moment';
 
 function ProfileRegisterScreen({navigation}) {
   const [checked, setChecked] = React.useState('male');
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [gender, setGender] = useState('');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
   const [imageUrl, setImageUrl] = useState(
     `https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/OOjs_UI_icon_userAvatar-progressive.svg/2048px-OOjs_UI_icon_userAvatar-progressive.svg.png`,
   );
@@ -61,6 +66,44 @@ function ProfileRegisterScreen({navigation}) {
         setResponseImage(url);
       }
     });
+  };
+
+  const checkData = () => {
+    if (name.trim().length == 0) {
+      ToastAndroid.show('Không được bỏ trống tên!', ToastAndroid.SHORT);
+      return false;
+    }
+    if (name.trim().length < 5) {
+      ToastAndroid.show('Tên tối thiểu 5 kí tự!', ToastAndroid.SHORT);
+      return false;
+    }
+    if (height.trim().length == 0) {
+      ToastAndroid.show('Không được bỏ trống chiều cao!', ToastAndroid.SHORT);
+      return false;
+    }
+    if (weight.trim().length == 0) {
+      ToastAndroid.show('Không được bỏ trống cân nặng!', ToastAndroid.SHORT);
+      return false;
+    }
+
+    const today = moment(new Date());
+
+    if (moment(date).diff(today, 'days') > -5 * 365) {
+      ToastAndroid.show('Tối thiểu 5 tuổi!', ToastAndroid.SHORT);
+      return false;
+    }
+
+    if (Number(height) < 20 || Number(height) > 200) {
+      ToastAndroid.show('Chiều cao không hợp lệ!', ToastAndroid.SHORT);
+      return false;
+    }
+
+    if (Number(weight) < 2 || Number(height) > 150) {
+      ToastAndroid.show('Cân nặng không hợp lệ!', ToastAndroid.SHORT);
+      return false;
+    }
+
+    return true;
   };
 
   async function requestCameraPermission() {
@@ -122,7 +165,10 @@ function ProfileRegisterScreen({navigation}) {
   return (
     <SafeAreaView style={styles.viewInforPerson}>
       <View style={styles.viewTitleInfor}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}>
           <Ionicons name="chevron-back" size={30} />
         </TouchableOpacity>
         <Text style={styles.txtTitleInfor}>Thông tin người đeo</Text>
@@ -148,6 +194,7 @@ function ProfileRegisterScreen({navigation}) {
           <TextInput
             style={styles.inputInfor}
             placeholder="Nhập họ tên người đeo"
+            onChangeText={newtext => setName(newtext)}
           />
         </View>
         <View style={styles.viewInputInfor2}>
@@ -173,11 +220,14 @@ function ProfileRegisterScreen({navigation}) {
         <View style={styles.viewInputInfor2}>
           <Text style={styles.txtTitleInpurInfor}>Sinh nhật</Text>
           <TouchableOpacity onPress={() => setOpen(true)}>
-            <TextInput
-              value={date.toLocaleDateString()} // Display selected date in TextInput
-              style={styles.input}
-              editable={false} // Disable editing of TextInput
-            />
+            <View style={styles.inputGender}>
+              <TextInput
+                value={date.toLocaleDateString()} // Display selected date in TextInput
+                style={styles.input}
+                editable={false} // Disable editing of TextInput
+              />
+              <Entypo name="calendar" size={30} color={COLOR.sencondary} />
+            </View>
           </TouchableOpacity>
           <DatePicker
             modal
@@ -194,23 +244,30 @@ function ProfileRegisterScreen({navigation}) {
           />
         </View>
         <View style={styles.viewInputInfor2}>
-          <Text style={styles.txtTitleInpurInfor}>Chiều cao</Text>
+          <Text style={styles.txtTitleInpurInfor}>Chiều cao (cm)</Text>
           <TextInput
             style={styles.inputInfor}
             placeholder="Nhập chiều cao người đeo"
             keyboardType="numeric"
+            onChangeText={newtext => setHeight(newtext)}
           />
         </View>
         <View style={styles.viewInputInfor2}>
-          <Text style={styles.txtTitleInpurInfor}>Cân nặng</Text>
+          <Text style={styles.txtTitleInpurInfor}>Cân nặng (kg)</Text>
           <TextInput
             style={styles.inputInfor}
             placeholder="Nhập cân nặng người đeo"
             keyboardType="numeric"
+            onChangeText={newtext => setWeight(newtext)}
           />
         </View>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          if (checkData()) {
+            navigation.navigate('RegisterScreen');
+          }
+        }}>
         <View style={styles.btnLogin}>
           <Text style={styles.txtLogin}>Xác nhận</Text>
         </View>
