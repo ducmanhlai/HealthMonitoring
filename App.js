@@ -1,10 +1,29 @@
-import React from 'react';
-import {Text,View} from 'react-native';
-import History from './src/history';
-function App(){
+import {NavigationContainer} from '@react-navigation/native';
+import React, {createContext, useState, useEffect} from 'react';
+import HomeNavigation from './src/utils/navigation/home-navigation';
+
+const AppContext = createContext();
+
+const AppContextProvider = ({children}) => {
+  const [user, setUser] = useState('');
+
+  const contextValues = {
+    user,
+    setUser,
+  };
+
   return (
-     <History></History>
+    <AppContext.Provider value={contextValues}>{children}</AppContext.Provider>
+  );
+};
+export {AppContext, AppContextProvider};
+
+export default function App() {
+  return (
+    <AppContextProvider>
+      <NavigationContainer>
+        <HomeNavigation />
+      </NavigationContainer>
+    </AppContextProvider>
   );
 }
-
-export default App;
