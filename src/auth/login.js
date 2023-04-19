@@ -80,8 +80,8 @@ function LoginScreen({navigation}) {
             .then(() => console.log('Object stored successfully'))
             .catch(error => console.log('Error storing object: ', error));
 
-          // navigation.replace('HomeScreen');
-          navigation.navigate('ChangePasswordScreen');
+          navigation.replace('HomeScreen');
+
           ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
         } else {
           ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
