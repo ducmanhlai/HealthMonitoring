@@ -6,9 +6,12 @@ import {
   TouchableOpacity,
   ToastAndroid,
   TextInput,
+  Alert,
 } from 'react-native';
 import styles from './style';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import * as request from '../service';
+import API from '../utils/api';
 
 function ForgotPasswordScreen({navigation}) {
   const [email, setEmail] = useState('');
@@ -24,6 +27,37 @@ function ForgotPasswordScreen({navigation}) {
       return false;
     }
     return true;
+  };
+  const refreshPassword = () => {
+    if (checkData()) {
+      request
+        .post(API.forgotpassword, {username: email})
+        .then(response => {
+          if (response.data.status == true) {
+            // setModalVisible(true);
+            //setNotify(true);
+            Alert.alert(
+              'Đổi mật khẩu thành công!',
+              'Chúng tôi đã gửi link đổi mật khẩu về mail: ' +
+                email +
+                '. Bạn hãy kiểm tra mail của bạn trước khi link hết hiệu lực.',
+              [{text: 'OK', onPress: () => navigation.replace('LoginScreen')}],
+            );
+
+            // setEmail('');
+            // setShow(true);
+          } else {
+            // Alert.alert('Thông báo!', response.message + '', [
+            //     { text: 'OK', onPress: () => console.log('OK Pressed') },
+            // ]);
+            ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          ToastAndroid.show(err.message, ToastAndroid.SHORT);
+        });
+    }
   };
   return (
     <SafeAreaView>
@@ -50,7 +84,7 @@ function ForgotPasswordScreen({navigation}) {
       </View>
 
       <View style={styles.viewBtnLogin}>
-        <TouchableOpacity onPress={() => checkData()}>
+        <TouchableOpacity onPress={() => refreshPassword()}>
           <View style={styles.btnLogin}>
             <Text style={styles.txtLogin}>Xác nhận</Text>
           </View>

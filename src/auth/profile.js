@@ -19,18 +19,25 @@ import DatePicker from 'react-native-date-picker';
 import {uploadImage} from '../service/uploadImage';
 import moment from 'moment';
 import {ScrollView} from 'react-native-gesture-handler';
+import {AppContext} from '../../App';
 
-function ProfileRegisterScreen({navigation}) {
-  const [checked, setChecked] = React.useState('nam');
-  const [date, setDate] = useState(new Date());
+function ProfileScreen({navigation}) {
+  const {isLogin, user} = useContext(AppContext);
+  console.log('user.birthDay: ', user.birthDay);
+  const [checked, setChecked] = useState(isLogin ? user.gender : 'nam');
+  const [date, setDate] = useState(user ? new Date(user.birthDay) : new Date());
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState('');
-  const [yourPhone, setYourPhone] = useState('');
-  const [relativePhone, setRelativePhone] = useState('');
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
+  const [name, setName] = useState(isLogin ? user.name : '');
+  const [yourPhone, setYourPhone] = useState(isLogin ? user.phoneNumber : '');
+  const [relativePhone, setRelativePhone] = useState(
+    isLogin ? user.familyPhoneNumber : '',
+  );
+  const [height, setHeight] = useState(isLogin ? user.height : '');
+  const [weight, setWeight] = useState(isLogin ? user.weight : '');
   const [imageUrl, setImageUrl] = useState(
-    `https://freesvg.org/img/abstract-user-flat-4.png`,
+    isLogin
+      ? user.imageUrl
+      : `https://freesvg.org/img/abstract-user-flat-4.png`,
   );
 
   const [responseImage, setResponseImage] = useState(
@@ -327,4 +334,4 @@ function ProfileRegisterScreen({navigation}) {
   );
 }
 
-export default ProfileRegisterScreen;
+export default ProfileScreen;
