@@ -63,7 +63,7 @@ function LoginScreen({navigation}) {
             email: account.email,
             id: account.userInfo['_id'],
             name: account.userInfo.name,
-            imageUrl: account.imageUrl,
+            imageUrl: account.userInfo.imageUrl,
             gender: account.userInfo.gender,
             birthDay: account.userInfo.birthDay,
             phoneNumber: account.userInfo.phoneNumber,
@@ -81,7 +81,7 @@ function LoginScreen({navigation}) {
             .catch(error => console.log('Error storing object: ', error));
 
           // navigation.replace('HomeScreen');
-          navigation.navigate('ProfileScreen');
+          navigation.navigate('ChangePasswordScreen');
           ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
         } else {
           ToastAndroid.show(response.data.message, ToastAndroid.SHORT);

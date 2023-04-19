@@ -100,7 +100,7 @@ function ProfileRegisterScreen({navigation}) {
       return false;
     }
 
-    if (Number(weight) < 2 || Number(height) > 150) {
+    if (Number(weight) < 2 || Number(weight) > 150) {
       ToastAndroid.show('Cân nặng không hợp lệ!', ToastAndroid.SHORT);
       return false;
     }

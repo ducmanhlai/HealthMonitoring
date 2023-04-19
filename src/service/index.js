@@ -41,7 +41,7 @@ export const postPrivate = async (
       headers: header,
       data: data,
     });
-    console.log('result: ', result);
+
     return result;
   } catch (error) {
     console.log(error);
