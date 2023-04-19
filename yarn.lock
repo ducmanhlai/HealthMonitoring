@@ -7015,14 +7015,13 @@
     "color" "^3.1.2"
     "use-latest-callback" "^0.1.5"
 
-"react-native-reanimated@^3.0.2":
-  "integrity" "sha512-8Et90yTI9yxchGbDP79k391XZqc/64zNbASbGy8X3Vgv4EbZ1M3IkKwcIbZmbVwpA804VJ6V9nJAGUh9fP0LrA=="
-  "resolved" "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.0.2.tgz"
-  "version" "3.0.2"
+"react-native-reanimated@^2.9.1":
+  "integrity" "sha512-pNbcjIsqB72lsLGr7DvcXl07oovTvQUaBgP6CdkYtogmrCKUMcB+TDe2OjUNPWdzJ9JkgNIZZ1h71LM78H9HrQ=="
+  "resolved" "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-2.15.0.tgz"
+  "version" "2.15.0"
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
-    "convert-source-map" "^1.7.0"
     "invariant" "^2.2.4"
     "lodash.isequal" "^4.5.0"
     "setimmediate" "^1.0.5"
