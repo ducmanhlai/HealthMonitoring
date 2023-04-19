@@ -59,6 +59,7 @@ function ForgotPasswordScreen({navigation}) {
         });
     }
   };
+
   return (
     <SafeAreaView>
       <View style={styles.header}>

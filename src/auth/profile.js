@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import styles from './style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -20,24 +21,23 @@ import {uploadImage} from '../service/uploadImage';
 import moment from 'moment';
 import {ScrollView} from 'react-native-gesture-handler';
 import {AppContext} from '../../App';
+import * as request from '../service';
+import API from '../utils/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ProfileScreen({navigation}) {
-  const {isLogin, user} = useContext(AppContext);
-  console.log('user.birthDay: ', user.birthDay);
-  const [checked, setChecked] = useState(isLogin ? user.gender : 'nam');
-  const [date, setDate] = useState(user ? new Date(user.birthDay) : new Date());
+  const {isLogin, setIsLogin, user, setUser} = useContext(AppContext);
+
+  const [checked, setChecked] = useState('nam');
+  const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState(isLogin ? user.name : '');
-  const [yourPhone, setYourPhone] = useState(isLogin ? user.phoneNumber : '');
-  const [relativePhone, setRelativePhone] = useState(
-    isLogin ? user.familyPhoneNumber : '',
-  );
-  const [height, setHeight] = useState(isLogin ? user.height : '');
-  const [weight, setWeight] = useState(isLogin ? user.weight : '');
+  const [name, setName] = useState('');
+  const [yourPhone, setYourPhone] = useState('');
+  const [relativePhone, setRelativePhone] = useState('');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
   const [imageUrl, setImageUrl] = useState(
-    isLogin
-      ? user.imageUrl
-      : `https://freesvg.org/img/abstract-user-flat-4.png`,
+    `https://freesvg.org/img/abstract-user-flat-4.png`,
   );
 
   const [responseImage, setResponseImage] = useState(
@@ -107,7 +107,7 @@ function ProfileScreen({navigation}) {
       return false;
     }
 
-    if (Number(weight) < 2 || Number(height) > 150) {
+    if (Number(weight) < 2 || Number(weight) > 150) {
       ToastAndroid.show('Cân nặng không hợp lệ!', ToastAndroid.SHORT);
       return false;
     }
@@ -128,20 +128,7 @@ function ProfileScreen({navigation}) {
 
     return true;
   };
-  const addInfo = () => {
-    if (checkData()) {
-      navigation.navigate('RegisterScreen', {
-        name,
-        gender: checked,
-        birthDay: moment(date).format('DD/MM/YYYY'),
-        height,
-        weight,
-        yourPhone,
-        relativePhone,
-        responseImage,
-      });
-    }
-  };
+
   async function requestCameraPermission() {
     try {
       const granted = await PermissionsAndroid.request(
@@ -198,6 +185,146 @@ function ProfileScreen({navigation}) {
     });
   };
 
+  useEffect(() => {
+    if (isLogin) {
+      setChecked(user.gender);
+      setDate(new Date(user.birthDay));
+      setName(user.name);
+      setYourPhone(user.phoneNumber);
+      setRelativePhone(user.familyPhoneNumber);
+      setHeight(user.height);
+      setWeight(user.weight);
+      setImageUrl(user.imageUrl);
+    }
+  }, []);
+
+  const update = async () => {
+    if (checkData()) {
+      request
+        .postPrivate(
+          '/account/' + user.id + '/update',
+          {
+            name: name,
+            imageUrl: responseImage,
+            gender: checked,
+            birthDay: moment(date).format('YYYY-MM-DD'),
+            phoneNumber: yourPhone,
+            familyPhoneNumber: relativePhone,
+            height: height,
+            weight: weight,
+          },
+          {'Content-Type': 'application/json', authorization: user.accessToken},
+          'PUT',
+        )
+        .then(response => {
+          if (response.data.status == true) {
+            const newUser = {
+              email: user.email,
+              id: user.id,
+              name: name,
+              imageUrl: responseImage,
+              gender: checked,
+              birthDay: moment(date).format('YYYY-MM-DD'),
+              phoneNumber: yourPhone,
+              familyPhoneNumber: relativePhone,
+              height: height,
+              weight: weight,
+              accessToken: user.authorization,
+              refreshToken: user.refreshToken,
+            };
+
+            //update user in side client
+            setUser(newUser);
+
+            //delete old user
+            AsyncStorage.removeItem('user')
+              .then(() => {
+                console.log('user removed from AsyncStorage');
+              })
+              .catch(error => {
+                console.error(error);
+              });
+            AsyncStorage.setItem('user', JSON.stringify(newUser))
+              .then(() => console.log('Object stored successfully'))
+              .catch(error => console.log('Error storing object: ', error));
+
+            ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+          } else {
+            if (response.data.message == 'Token đã hết hạn') {
+              getRefreshToken();
+            } else ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          ToastAndroid.show(err.message, ToastAndroid.SHORT);
+        });
+    }
+  };
+
+  async function getRefreshToken() {
+    try {
+      const res2 = await request.post(API.refeshToken, {
+        token: user.refreshToken,
+      });
+
+      if (res2.data.status == true) {
+        const account = response.data.data.user;
+        const newUser = {
+          email: account.email,
+          id: account.userInfo['_id'],
+          name: account.userInfo.name,
+          imageUrl: account.userInfo.imageUrl,
+          gender: account.userInfo.gender,
+          birthDay: account.userInfo.birthDay,
+          phoneNumber: account.userInfo.phoneNumber,
+          familyPhoneNumber: account.userInfo.familyPhoneNumber,
+          height: account.userInfo.height,
+          weight: account.userInfo.weight,
+          accessToken: response.headers.authorization,
+          refreshToken: response.data.data.refreshToken,
+        };
+        //update user in side client
+        setUser(newUser);
+
+        //delete old user
+        AsyncStorage.removeItem('user')
+          .then(() => {
+            console.log('user removed from AsyncStorage');
+          })
+          .catch(error => {
+            console.error(error);
+          });
+
+        AsyncStorage.setItem('user', JSON.stringify(newUser))
+          .then(() => console.log('Object stored successfully'))
+          .catch(error => console.log('Error storing object: ', error));
+        return true;
+      } else {
+        // Alert.alert('Thông báo!', res2.message + '', [{ text: 'OK', onPress: () => console.log('OK Pressed') }]);
+
+        if (res2.data.message == 'Refesh token không hợp lệ!') {
+          setUser(null);
+          setIsLogin(false);
+          //delete old user
+          AsyncStorage.removeItem('user')
+            .then(() => {
+              console.log('user removed from AsyncStorage');
+            })
+            .catch(error => {
+              console.error(error);
+              ToastAndroid.show(error, ToastAndroid.SHORT);
+            });
+          navigation.replace('LoginScreen');
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      ToastAndroid.show(error.message, ToastAndroid.SHORT);
+    }
+    return false;
+  }
+
   return (
     <ScrollView>
       <SafeAreaView style={styles.viewInforPerson}>
@@ -231,6 +358,7 @@ function ProfileScreen({navigation}) {
             <TextInput
               style={styles.inputInfor}
               placeholder="Nhập họ tên người đeo"
+              defaultValue={name}
               onChangeText={newtext => setName(newtext)}
             />
           </View>
@@ -259,7 +387,7 @@ function ProfileScreen({navigation}) {
             <TouchableOpacity onPress={() => setOpen(true)}>
               <View style={styles.inputGender}>
                 <TextInput
-                  value={date.toLocaleDateString()} // Display selected date in TextInput
+                  value={moment(date).format('DD/MM/YYYY')} // Display selected date in TextInput
                   style={styles.input}
                   editable={false} // Disable editing of TextInput
                 />
@@ -286,6 +414,7 @@ function ProfileScreen({navigation}) {
               style={styles.inputInfor}
               placeholder="Nhập chiều cao người đeo"
               keyboardType="numeric"
+              defaultValue={height}
               onChangeText={newtext => setHeight(newtext)}
             />
           </View>
@@ -295,6 +424,7 @@ function ProfileScreen({navigation}) {
               style={styles.inputInfor}
               placeholder="Nhập cân nặng người đeo"
               keyboardType="numeric"
+              defaultValue={weight}
               onChangeText={newtext => setWeight(newtext)}
             />
           </View>
@@ -306,6 +436,7 @@ function ProfileScreen({navigation}) {
               style={styles.inputInfor}
               placeholder="Nhập số điện thoại cá nhân"
               keyboardType="numeric"
+              defaultValue={yourPhone}
               onChangeText={newtext => setYourPhone(newtext)}
             />
           </View>
@@ -317,13 +448,14 @@ function ProfileScreen({navigation}) {
               style={styles.inputInfor}
               placeholder="Nhập số điện thoại người thân"
               keyboardType="numeric"
+              defaultValue={relativePhone}
               onChangeText={newtext => setRelativePhone(newtext)}
             />
           </View>
         </View>
         <TouchableOpacity
           onPress={() => {
-            addInfo();
+            update();
           }}>
           <View style={styles.btnLogin}>
             <Text style={styles.txtLogin}>Xác nhận</Text>
