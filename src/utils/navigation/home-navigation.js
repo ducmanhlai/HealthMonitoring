@@ -5,6 +5,7 @@ import RegisterScreen from '../../auth/register';
 import ForgotPasswordScreen from '../../auth/forgot-password';
 import ProfileRegisterScreen from '../../auth/profileRegister';
 import HomeTab from './home-tab';
+import ProfileScreen from '../../auth/profile';
 
 const Stack = createStackNavigator();
 function HomeNavigation() {
@@ -21,6 +22,7 @@ function HomeNavigation() {
         name="ProfileRegisterScreen"
         component={ProfileRegisterScreen}
       />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }

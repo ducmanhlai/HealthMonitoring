@@ -11,8 +11,10 @@ import styles from './style';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import * as request from '../service';
+import API from '../utils/api';
 
-function RegisterScreen({navigation}) {
+function RegisterScreen({route, navigation}) {
   const [seePassword, setSeepassword] = useState(false);
   const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -47,6 +49,39 @@ function RegisterScreen({navigation}) {
       return false;
     }
     return true;
+  };
+
+  const register = () => {
+    if (checkData()) {
+      request
+        .post(API.register, {
+          username: email,
+          password: password,
+          name: route.params.name,
+          imageUrl: route.params.responseImage,
+          gender: route.params.gender,
+          birthDay: route.params.birthDay,
+          phoneNumber: route.params.yourPhone,
+          familyPhoneNumber: route.params.relativePhone,
+          height: route.params.height,
+          weight: route.params.weight,
+        })
+        .then(response => {
+          if (response.data.status == true) {
+            // setUsername('');
+            // setPassword('');
+            // setConfirm('');
+
+            navigation.replace('LoginScreen');
+            ToastAndroid.show('Đăng ký thành công!', ToastAndroid.SHORT);
+          } else {
+            ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+          }
+        })
+        .catch(err => {
+          ToastAndroid.show('Đăng ký thất bại!', ToastAndroid.SHORT);
+        });
+    }
   };
   return (
     <SafeAreaView>
@@ -115,7 +150,7 @@ function RegisterScreen({navigation}) {
         <View style={styles.lineInput} />
       </View>
       <View style={styles.viewBtnLogin}>
-        <TouchableOpacity onPress={() => checkData()}>
+        <TouchableOpacity onPress={() => register()}>
           <View style={styles.btnLogin}>
             <Text style={styles.txtLogin}>Đăng ký</Text>
           </View>

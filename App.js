@@ -6,10 +6,12 @@ const AppContext = createContext();
 
 const AppContextProvider = ({children}) => {
   const [user, setUser] = useState('');
-
+  const [isLogin, setIsLogin] = useState('');
   const contextValues = {
     user,
     setUser,
+    isLogin,
+    setIsLogin,
   };
 
   return (
