@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const request = axios.create({
-  baseURL: 'https://localhost:3000/',
+  baseURL: 'http://192.168.1.11:3000',
   responseType: 'json',
   withCredentials: true,
 });
@@ -41,7 +41,7 @@ export const postPrivate = async (
       headers: header,
       data: data,
     });
-    console.log('result: ', result);
+
     return result;
   } catch (error) {
     console.log(error);
