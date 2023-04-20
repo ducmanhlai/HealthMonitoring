@@ -1,14 +1,14 @@
 import React, {useState, useContext, useEffect} from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
 
-function HomeScreen({navigation}) {
+function CheckHealthScreen({navigation}) {
   return (
     <SafeAreaView>
       <View>
-        <Text>HomeScreen</Text>
+        <Text>CheckHealthScreen</Text>
       </View>
     </SafeAreaView>
   );
 }
 
-export default HomeScreen;
+export default CheckHealthScreen;
