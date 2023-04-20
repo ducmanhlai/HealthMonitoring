@@ -12,7 +12,7 @@ const Tab = createBottomTabNavigator();
 function HomeTab() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="z"
       activeColor={COLOR.pink}
       inactiveColor={COLOR.white}
       activeBackgroundColor={COLOR.sencondary}
