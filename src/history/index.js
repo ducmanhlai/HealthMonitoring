@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         height: 200,
     }
 });
-function fakeData() {
+function getData() {
     let list = []
     for (let index = 1; index < 8; index++) {
         list.push({ x: index, y: Math.floor(Math.random() * 55) + 65 })
