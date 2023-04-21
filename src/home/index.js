@@ -6,6 +6,7 @@ import {LineChart} from 'react-native-charts-wrapper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../utils/components/header';
 import styles from './style';
+import {MenuProvider} from 'react-native-popup-menu';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
@@ -25,7 +26,7 @@ firebase.initializeApp(firebaseConfig);
 function HomeScreen({navigation}) {
   return (
     <SafeAreaView>
-      <Header></Header>
+      <Header navigation={navigation} />
       <View>
         <Moniter />
         <Chart />
@@ -56,7 +57,7 @@ function Moniter() {
             <AntDesign
               name="heart"
               color="red"
-              size={46}
+              size={18}
               style={{textAlign: 'center'}}
             />
             <Text style={styles.heartRateText}>{bmp}</Text>
@@ -99,7 +100,7 @@ function Chart() {
                   drawCubic: true,
                   drawHighlightIndicators: false,
                   color: 'red',
-                  fillColor: 'red',
+                  fillColor: 1,
                   fillAlpha: 90,
                   valueFormatter: '###',
                 },
