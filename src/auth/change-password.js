@@ -67,7 +67,7 @@ function ChangePasswordScreen({route, navigation}) {
           },
           {'Content-Type': 'application/json', authorization: user.accessToken},
           'PATCH',
-        )
+        ) 
         .then(response => {
           if (response.data.status == true) {
             ToastAndroid.show('Cập nhật thành công!', ToastAndroid.SHORT);

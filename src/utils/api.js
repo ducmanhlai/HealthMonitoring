@@ -5,6 +5,7 @@ const API = {
   refeshToken: '/account/refresh-token',
   changPassword: '/account/change-password',
   getToken: '/account/token',
+  getHistory:'/history/get'
 };
 
 export default API;
