@@ -27,7 +27,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ProfileScreen({navigation}) {
   const {isLogin, setIsLogin, user, setUser} = useContext(AppContext);
-
   const [checked, setChecked] = useState('nam');
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);

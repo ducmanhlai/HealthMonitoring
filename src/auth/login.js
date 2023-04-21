@@ -92,66 +92,85 @@ function LoginScreen({navigation}) {
       }
     }
   };
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    AsyncStorage.getItem('user')
+      .then(data => {
+        if (data != null) navigation.replace('HomeScreen');
+        else setIsLoading(true);
+      })
+      .catch(err => console.log(err));
+  }, []);
   return (
     <SafeAreaView>
-      <View style={styles.header}>
-        <Text style={styles.title1}>Chào mừng bạn</Text>
-        <Text style={styles.title2}>ĐĂNG NHẬP</Text>
-        <View style={styles.headerBar}>
-          <View style={styles.barHead1} />
-          <View style={styles.barHead2} />
-        </View>
-      </View>
-      <View style={styles.viewInput}>
-        <View style={styles.viewIconInput}>
-          <Fontisto style={styles.iconInput} name="email" size={20} />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            onChangeText={newText => setEmail(newText)}
-          />
-        </View>
-        <View style={styles.lineInput} />
-        <View style={styles.viewIconInput}>
-          <FontAwesome5 style={styles.iconInput} name="unlock-alt" size={20} />
-          <TextInput
-            style={styles.input}
-            secureTextEntry={!seePassword}
-            placeholder="Mật khẩu"
-            onChangeText={newText => setPassword(newText)}
-          />
-
-          <TouchableOpacity onPress={() => setSeepassword(!seePassword)}>
-            {seePassword ? (
-              <FontAwesome style={styles.iconInput} name="eye" size={20} />
-            ) : (
-              <FontAwesome
+      {isLoading ? (
+        <View>
+          <View style={styles.header}>
+            <Text style={styles.title1}>Chào mừng bạn</Text>
+            <Text style={styles.title2}>ĐĂNG NHẬP</Text>
+            <View style={styles.headerBar}>
+              <View style={styles.barHead1} />
+              <View style={styles.barHead2} />
+            </View>
+          </View>
+          <View style={styles.viewInput}>
+            <View style={styles.viewIconInput}>
+              <Fontisto style={styles.iconInput} name="email" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                onChangeText={newText => setEmail(newText)}
+              />
+            </View>
+            <View style={styles.lineInput} />
+            <View style={styles.viewIconInput}>
+              <FontAwesome5
                 style={styles.iconInput}
-                name="eye-slash"
+                name="unlock-alt"
                 size={20}
               />
-            )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.lineInput} />
-      </View>
-      <View style={styles.viewBtnLogin}>
-        <TouchableOpacity onPress={() => login()}>
-          <View style={styles.btnLogin}>
-            <Text style={styles.txtLogin}>Đăng nhập</Text>
+              <TextInput
+                style={styles.input}
+                secureTextEntry={!seePassword}
+                placeholder="Mật khẩu"
+                onChangeText={newText => setPassword(newText)}
+              />
+
+              <TouchableOpacity onPress={() => setSeepassword(!seePassword)}>
+                {seePassword ? (
+                  <FontAwesome style={styles.iconInput} name="eye" size={20} />
+                ) : (
+                  <FontAwesome
+                    style={styles.iconInput}
+                    name="eye-slash"
+                    size={20}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+            <View style={styles.lineInput} />
           </View>
-        </TouchableOpacity>
-        <View style={styles.viewTxtOther}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ProfileRegisterScreen')}>
-            <Text style={styles.txtOther}>Đăng ký</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPasswordScreen')}>
-            <Text style={styles.txtOther}>Quên mật khẩu</Text>
-          </TouchableOpacity>
+          <View style={styles.viewBtnLogin}>
+            <TouchableOpacity onPress={() => login()}>
+              <View style={styles.btnLogin}>
+                <Text style={styles.txtLogin}>Đăng nhập</Text>
+              </View>
+            </TouchableOpacity>
+            <View style={styles.viewTxtOther}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ProfileRegisterScreen')}>
+                <Text style={styles.txtOther}>Đăng ký</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+                <Text style={styles.txtOther}>Quên mật khẩu</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
+      ) : (
+        ''
+      )}
     </SafeAreaView>
   );
 }
