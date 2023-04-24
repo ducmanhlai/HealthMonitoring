@@ -7,6 +7,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 20,
   },
+  
+  statusContainer: {
+    paddingHorizontal: 30,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginVertical: 5,
+  },
+
+  circle:{
+    width:10,
+    height:10,
+    borderRadius: 5,
+    alignSelf:'center',
+    marginRight:5,
+  },
+
+  statusText: {
+    fontSize: 14,
+    fontWeight:'bold',
+  },
 
   outerCircle: {
     width: 170,

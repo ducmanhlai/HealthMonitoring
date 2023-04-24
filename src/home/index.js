@@ -10,6 +10,7 @@ import {MenuProvider} from 'react-native-popup-menu';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
+import COLOR from '../utils/color';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD8f6u7pcZS96aDABfvlVB06B4PVw5CUQY',
@@ -28,11 +29,24 @@ function HomeScreen({navigation}) {
     <SafeAreaView>
       <Header navigation={navigation} />
       <View>
+        <Status/>
         <Moniter />
         <Chart />
       </View>
     </SafeAreaView>
   );
+}
+
+function Status(){
+  var status = false;
+  var statusColor = COLOR.red;
+  if(status) statusColor=COLOR.green; else statusColor=COLOR.red;
+  return(
+    <View style={styles.statusContainer}>
+      <View style={[styles.circle,{backgroundColor:statusColor}]}></View>
+      <Text style={styles.statusText}>{status? 'Kết nối' : 'Mất kết nối'}</Text>
+    </View>
+  )
 }
 
 function Moniter() {
