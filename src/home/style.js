@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  container_chart: {
+  containerChart: {
     height: 350,
     backgroundColor: '#F5FCFF',
   },
