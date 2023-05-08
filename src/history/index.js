@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
-import {useState} from 'react';
-import {useEffect} from 'react';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,14 +10,14 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import {LineChart} from 'react-native-charts-wrapper';
-import {get} from '../service';
+import { LineChart } from 'react-native-charts-wrapper';
+import { get } from '../service';
 import API from '../utils/api';
 import Header from '../utils/components/header';
 import Item from './components/Item';
 
 const COLOR_RED = processColor('#FF0000');
-function History({navigation}) {
+function History({ navigation }) {
   const [user, setUser] = useState({});
   const [listHistory, setListHistory] = useState([]);
   async function getHistory(accessToken) {
@@ -28,11 +28,11 @@ function History({navigation}) {
       },
     });
     setListHistory(
-      tmp.data.heart.map((item, index) => {
+      tmp.data.map((item, index) => {
         return {
           x: new Date(item.date).getDate(),
           y: item.heartRate,
-          oxy: tmp.data.spO2[index].oxygen,
+          oxy: item.SpO2,
           date: new Date(item.date).toLocaleDateString(),
         };
       }),
@@ -47,22 +47,59 @@ function History({navigation}) {
       .catch(err => console.log(err));
   }, []);
   return (
-    <View style={{height: '100%', flex: 1, flexDirection: 'column'}}>
+    <View style={{ height: '100%', flex: 1, flexDirection: 'column' }}>
       <Header navigation={navigation} />
       <Chart />
       <ListHistory />
     </View>
   );
+  function joinByDate() {
+    const result = {}
+    var resultList=[]
+    listHistory.forEach(item => {
+      const { date, ...rest } = item;
+      if (!result[date]) {
+        result[date] = [rest];
+      } else {
+        result[date].push(rest);
+      }
+      resultList = Object.entries(result).map(([date, groupedObjects]) => {
+        return { date, values: groupedObjects };
+      });
+    });
+   
+      const total = resultList.map(element => {
+        const len = element.values.length
+        const newElement = {
+          date: element.date,
+          values: element.values.reduce((acc, cur) => {
+            acc.oxy += cur.oxy;
+            acc.x += cur.x;
+            acc.y += cur.y;
+            return acc
+          }, { oxy: 0, x: 0, y: 0 })
+        }
+        return {
+          date: newElement.date,
+          oxy: Math.trunc(newElement.values.oxy / len),
+          x: Math.trunc(newElement.values.x / len),
+          y: Math.trunc(newElement.values.y / len)
+        }
+
+      })
+      return total
+  }
   function Chart() {
+     
     return (
-      <View style={{marginTop: 10}}>
+      <View style={{ marginTop: 10 }}>
         <View style={styles.container_chart}>
           <LineChart
             style={styles.chart}
             data={{
               dataSets: [
                 {
-                  values: listHistory,
+                  values: joinByDate(),
                   label: 'Nhịp tim',
                   config: {
                     lineWidth: 1.5,
@@ -89,10 +126,10 @@ function History({navigation}) {
                 drawGridLines: true,
               },
             }}
-            chartDescription={{text: ''}}
+            chartDescription={{ text: '' }}
             autoScaleMinMaxEnabled={true}
           />
-          <Text style={{marginLeft: 20, color: 'black'}}>
+          <Text style={{ marginLeft: 20, color: 'black' }}>
             Dữ liệu từ 01/02-07/02
           </Text>
         </View>
@@ -111,9 +148,9 @@ function History({navigation}) {
           backgroundColor: '#F5FCFF',
         }}>
         <FlatList
-          data={listHistory}
-          style={{height: '100%', width: '80%', backgroundColor: '#F5FCFF'}}
-          contentContainerStyle={{flexGrow: 10}}
+          data={joinByDate()}
+          style={{ height: '100%', width: '80%', backgroundColor: '#F5FCFF' }}
+          contentContainerStyle={{ flexGrow: 10 }}
           scrollEnabled={true}
           renderItem={item => Item(item)}></FlatList>
       </SafeAreaView>
@@ -137,7 +174,7 @@ const styles = StyleSheet.create({
 function fakeData() {
   let list = [];
   for (let index = 1; index < 8; index++) {
-    list.push({x: index, y: Math.floor(Math.random() * 55) + 65});
+    list.push({ x: index, y: Math.floor(Math.random() * 55) + 65 });
   }
   return list;
 }
