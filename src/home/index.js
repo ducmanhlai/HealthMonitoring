@@ -52,21 +52,43 @@ function Status(){
 }
 
 function Moniter() {
+  const [connect, setConnect] = useState(0);
+  const [spo2, setSpo2] = useState(0);
   const [bmp, setBMP] = useState(0);
+  const [temp, setTemp] = useState(0);
   useEffect(() => {
     const dbRef = firebase.database().ref('test/led');
     dbRef.on('value', snapshot => {
       const newData = snapshot.val();
+      setConnect(newData);
+    });
+
+    const dbRef2 = firebase.database().ref('test/spo2');
+    dbRef.on('value', snapshot => {
+      const newData = snapshot.val();
+      setSpo2(newData);
+    });
+
+    const dbRef3 = firebase.database().ref('test/bmp');
+    dbRef.on('value', snapshot => {
+      const newData = snapshot.val();
       setBMP(newData);
+    });
+
+    const dbRef4 = firebase.database().ref('test/temp');
+    dbRef.on('value', snapshot => {
+      const newData = snapshot.val();
+      setTemp(newData);
     });
 
     // Return a cleanup function to remove the listener when the component unmounts
     return () => {
       dbRef.off('value');
     };
-  }, [firebase, setBMP]);
+  }, [firebase]);
   return (
     <View style={styles.container}>
+      <Text>{connect}</Text>
       <View style={styles.outerCircle}>
         <View style={styles.innerCircle}>
           <View style={styles.heartRateContainer}>
@@ -85,11 +107,11 @@ function Moniter() {
           <View style={styles.infoContainer}>
             <View style={styles.infoItem}>
               <FontAwesome5 name="temperature-low" style={styles.infoIcon} />
-              <Text style={styles.infoText}>35°C</Text>
+              <Text style={styles.infoText}>{temp}°C</Text>
             </View>
             <View style={styles.infoItem}>
               <FontAwesome5 name="lungs" style={styles.infoIcon} />
-              <Text style={styles.infoText}>50%</Text>
+              <Text style={styles.infoText}>{spo2}%</Text>
             </View>
           </View>
         </View>
