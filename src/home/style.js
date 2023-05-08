@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   confirmContainer: {
-    paddingVertical: 135,
+    paddingVertical: 60,
     paddingHorizontal: 60,
   },
   confirmTitle: {

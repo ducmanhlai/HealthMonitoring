@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {SafeAreaView, Text, View, Button} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 import Header from '../utils/components/header';
 import styles from './style';
@@ -24,6 +25,9 @@ function CheckHealthScreen({navigation}) {
 
 //component xác nhận kiểm tra
 const Confirm = ({setShowHealthCheck}) => {
+  const [selectedCp, setSelectedCp] = useState("0");
+  const [selectedExng, setSelectedExng] = useState("0");
+
   const handleButtonClick = () => {
     setShowHealthCheck(true);
   };
@@ -31,8 +35,30 @@ const Confirm = ({setShowHealthCheck}) => {
   return (
     <View style={[styles.subContainer, styles.confirmContainer]}>
       <Text style={styles.confirmTitle}>
-        Bạn có xác nhận kiểm tra sức khỏe?
+        Kiểm tra sức khỏe:
       </Text>
+      <View>
+        <Text>Tình trạng đau ngực:</Text>
+        <Picker
+          selectedValue={selectedCp}
+          onValueChange={(itemValue, itemIndex) => setSelectedCp(itemValue)}
+        >
+          <Picker.Item label="0 - Không đau ngực - Không có triệu chứng đau ngực" value="0" />
+          <Picker.Item label="1 - Đau ngực nhẹ - Đau ngực nhẹ nhàng hoặc không thoải mái" value="1" />
+          <Picker.Item label="2 - Đau ngực trung bình - Đau ngực ở mức đủ để gây khó chịu và ảnh hưởng đến hoạt động" value="2" />
+          <Picker.Item label="3 - Đau ngực nặng - Đau ngực cực kỳ nghiêm trọng và khong thể chịu đựng được. Có thể gây ra sự gián đoạn đáng kể cho hoạt động hằng ngày" value="3" />
+        </Picker>
+
+        <Text>Tình trạng đau ngực sau vận động:</Text>
+        <Picker
+          selectedValue={selectedExng}
+          onValueChange={(itemValue, itemIndex) => setSelectedExng(itemValue)}
+        >
+          <Picker.Item label="Yes" value="1" />
+          <Picker.Item label="No" value="0" />
+
+        </Picker>
+      </View>
       <Button
         style={styles.confirmButton}
         title="Xác nhận"
