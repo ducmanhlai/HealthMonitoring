@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import COLOR from "../../utils/color";
 function Item(props) {
     const data= props.item
-    console.log(props)
     return (<TouchableOpacity style={{marginBottom:10}}>
         <Text style={{backgroundColor:COLOR.gray,borderRadius:5}}>Ngày {data.date}</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
