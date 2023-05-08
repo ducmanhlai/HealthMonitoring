@@ -1,7 +1,9 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
+import {SafeAreaView, Text, View, Dimensions} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {LineChart} from 'react-native-charts-wrapper';
+// import {LineChart} from 'react-native-charts-wrapper';
+import {LineChart} from 'react-native-chart-kit';
+
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../utils/components/header';
@@ -10,6 +12,7 @@ import {MenuProvider} from 'react-native-popup-menu';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
+import COLOR from '../utils/color';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD8f6u7pcZS96aDABfvlVB06B4PVw5CUQY',
@@ -28,11 +31,24 @@ function HomeScreen({navigation}) {
     <SafeAreaView>
       <Header navigation={navigation} />
       <View>
+        <Status/>
         <Moniter />
         <Chart />
       </View>
     </SafeAreaView>
   );
+}
+
+function Status(){
+  var status = false;
+  var statusColor = COLOR.red;
+  if(status) statusColor=COLOR.green; else statusColor=COLOR.red;
+  return(
+    <View style={styles.statusContainer}>
+      <View style={[styles.circle,{backgroundColor:statusColor}]}></View>
+      <Text style={styles.statusText}>{status? 'Kết nối' : 'Mất kết nối'}</Text>
+    </View>
+  )
 }
 
 function Moniter() {
@@ -104,56 +120,40 @@ function Moniter() {
   );
 }
 
-function Chart() {
+const data = {
+  datasets: [
+    {
+      data: [20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43],
+      color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`, // Set the color of the line
+      strokeWidth: 2 // Set the width of the line
+    }
+  ]
+};
+
+const chartConfig = {
+  backgroundColor: COLOR.white,
+  backgroundGradientFrom: COLOR.white,
+  backgroundGradientTo: COLOR.white,
+  decimalPlaces: 2, // Number of decimal places to round the labels to
+  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Set the color of the labels
+  style: {
+    borderRadius: 16,
+    
+  }
+};
+
+const Chart = () => {
   return (
-    <View style={{marginTop: 10}}>
-      <View style={styles.container_chart}>
-        <LineChart
-          style={styles.chart}
-          data={{
-            dataSets: [
-              {
-                values: fakeData(),
-                label: 'Nhịp tim',
-                config: {
-                  lineWidth: 1.5,
-                  drawCircles: false,
-                  drawCubicIntensity: 0.3,
-                  drawCubic: true,
-                  drawHighlightIndicators: false,
-                  color: 'red',
-                  fillColor: 1,
-                  fillAlpha: 90,
-                  valueFormatter: '###',
-                },
-              },
-            ],
-          }}
-          xAxis={{
-            granularity: 1,
-            granularityEnabled: true,
-            position: 'BOTTOM',
-            valueFormatter: '###',
-          }}
-          yAxis={{
-            left: {
-              drawGridLines: true,
-            },
-          }}
-          chartDescription={{text: ''}}
-          autoScaleMinMaxEnabled={true}
-        />
-      </View>
+    <View style={styles.containerChart}>
+      <LineChart
+        data={data}
+        width={Dimensions.get('window').width} // Set the width of the chart
+        height={220} // Set the height of the chart
+        chartConfig={chartConfig}
+        bezier // Enable bezier curve
+      />
     </View>
   );
-}
-
-function fakeData() {
-  let list = [];
-  for (let index = 1; index < 8; index++) {
-    list.push({x: index, y: Math.floor(Math.random() * 55) + 65});
-  }
-  return list;
-}
+};
 
 export default HomeScreen;
