@@ -9,16 +9,25 @@ import {
   processColor,
   FlatList,
   SafeAreaView,
+  TouchableOpacity, TextInput
 } from 'react-native';
+import moment from 'moment';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import DatePicker from 'react-native-date-picker';
 import { LineChart } from 'react-native-charts-wrapper';
 import { get } from '../service';
 import API from '../utils/api';
 import Header from '../utils/components/header';
 import Item from './components/Item';
-
+import COLOR from '../utils/color';
 const COLOR_RED = processColor('#FF0000');
 function History({ navigation }) {
   const [user, setUser] = useState({});
+  const [openFrom, setOpenFrom] = useState(false);
+  const [openTo, setOpenTo] = useState(false);
+  const [dateFrom, setDateFrom] = useState(new Date());
+  const [dateTo, setDateTo] = useState(new Date());
   const [listHistory, setListHistory] = useState([]);
   async function getHistory(accessToken) {
     const tmp = await get(API.getHistory, {
@@ -55,7 +64,7 @@ function History({ navigation }) {
   );
   function joinByDate() {
     const result = {}
-    var resultList=[]
+    var resultList = []
     listHistory.forEach(item => {
       const { date, ...rest } = item;
       if (!result[date]) {
@@ -67,30 +76,30 @@ function History({ navigation }) {
         return { date, values: groupedObjects };
       });
     });
-   
-      const total = resultList.map(element => {
-        const len = element.values.length
-        const newElement = {
-          date: element.date,
-          values: element.values.reduce((acc, cur) => {
-            acc.oxy += cur.oxy;
-            acc.x += cur.x;
-            acc.y += cur.y;
-            return acc
-          }, { oxy: 0, x: 0, y: 0 })
-        }
-        return {
-          date: newElement.date,
-          oxy: Math.trunc(newElement.values.oxy / len),
-          x: Math.trunc(newElement.values.x / len),
-          y: Math.trunc(newElement.values.y / len)
-        }
 
-      })
-      return total
+    const total = resultList.map(element => {
+      const len = element.values.length
+      const newElement = {
+        date: element.date,
+        values: element.values.reduce((acc, cur) => {
+          acc.oxy += cur.oxy;
+          acc.x += cur.x;
+          acc.y += cur.y;
+          return acc
+        }, { oxy: 0, x: 0, y: 0 })
+      }
+      
+      return {
+        date: newElement.date,
+        oxy: Math.trunc(newElement.values.oxy / len),
+        x: Math.trunc(newElement.values.x / len),
+        y: Math.trunc(newElement.values.y / len),
+        isShow: compareDates(newElement.date,dateTo)==-1 && compareDates(newElement.date,dateFrom)==1
+      }
+    })
+    return total
   }
   function Chart() {
-     
     return (
       <View style={{ marginTop: 10 }}>
         <View style={styles.container_chart}>
@@ -99,7 +108,9 @@ function History({ navigation }) {
             data={{
               dataSets: [
                 {
-                  values: joinByDate(),
+                  values: joinByDate().filter(item=>{
+                    return item.isShow
+                  }),
                   label: 'Nhịp tim',
                   config: {
                     lineWidth: 1.5,
@@ -129,9 +140,60 @@ function History({ navigation }) {
             chartDescription={{ text: '' }}
             autoScaleMinMaxEnabled={true}
           />
-          <Text style={{ marginLeft: 20, color: 'black' }}>
-            Dữ liệu từ 01/02-07/02
-          </Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            <Text style={{ marginLeft: 20, marginTop: 13, color: 'black' }}>
+              Dữ liệu từ
+            </Text>
+            <TouchableOpacity onPress={() => setOpenFrom(true)}>
+              <View>
+                <TextInput
+                  value={moment(dateFrom).format('DD/MM/YYYY')} // Display selected date in TextInput
+                  style={{ color: 'black' }}
+                  editable={false} // Disable editing of TextInput
+                />
+                <Entypo name="calendar" size={30} color={COLOR.sencondary} />
+              </View>
+            </TouchableOpacity>
+            <DatePicker
+              modal
+              open={openFrom}
+              date={dateFrom}
+              mode="date"
+              onConfirm={date => {
+                setOpenFrom(false);
+                setDateFrom(date);
+              }}
+              onCancel={() => {
+                setOpenFrom(false);
+              }}
+            />
+            <Text style={{ marginLeft: 20, marginTop: 13, color: 'black' }}>
+              Đến
+            </Text>
+            <TouchableOpacity onPress={() => setOpenTo(true)}>
+              <View>
+                <TextInput
+                  value={moment(dateTo).format('DD/MM/YYYY')} // Display selected date in TextInput
+                  style={{ color: 'black' }}
+                  editable={false} // Disable editing of TextInput
+                />
+                <Entypo name="calendar" size={30} color={COLOR.sencondary} />
+              </View>
+            </TouchableOpacity>
+            <DatePicker
+              modal
+              open={openTo}
+              date={dateTo}
+              mode="date"
+              onConfirm={date => {
+                setOpenTo(false);
+                setDateTo(date);
+              }}
+              onCancel={() => {
+                setOpenTo(false);
+              }}
+            />
+          </View>
         </View>
       </View>
     );
@@ -148,11 +210,21 @@ function History({ navigation }) {
           backgroundColor: '#F5FCFF',
         }}>
         <FlatList
-          data={joinByDate()}
+          data={joinByDate().filter(item=>{
+            return item.isShow
+          })}
           style={{ height: '100%', width: '80%', backgroundColor: '#F5FCFF' }}
           contentContainerStyle={{ flexGrow: 10 }}
           scrollEnabled={true}
-          renderItem={item => Item(item)}></FlatList>
+          renderItem={item => Item(item)}
+          ListEmptyComponent={
+            <View style={{justifyContent:'center',alignItems:'center',height: '100%', width: '100%',}}>
+              <Text style={{color:'black',fontSize:18}}>Không có dữ liệu</Text>
+            </View>
+          }
+          >
+          
+          </FlatList>
       </SafeAreaView>
     );
   }
@@ -171,11 +243,17 @@ const styles = StyleSheet.create({
     height: 200,
   },
 });
-function fakeData() {
-  let list = [];
-  for (let index = 1; index < 8; index++) {
-    list.push({ x: index, y: Math.floor(Math.random() * 55) + 65 });
+const compareDates = (d1, d2) => {
+  let tmp=d1.split('/')
+  let date1 = new Date(+tmp[2],  tmp[1] -1, + tmp[0]);
+  date1=date1.getTime()
+  let date2 = new Date(d2).getTime();
+  if (date1 < date2) {
+    return -1
+  } else if (date1 > date2) {
+    return 1
+  } else {
+    return 0
   }
-  return list;
-}
+};
 export default History;
