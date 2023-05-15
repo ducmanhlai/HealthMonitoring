@@ -120,12 +120,23 @@ function Moniter() {
 }
 
 const data = {
+  labels: [
+    '12h',
+    '11h',
+    '10h',
+    '9h',
+    '8h',
+    '7h',
+    '6h',
+    '5h',
+    '4h',
+    '3h',
+    '2h',
+    '1h trước',
+  ],
   datasets: [
     {
-      data: [
-        20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43,
-        20, 45, 28, 80, 99, 43,
-      ],
+      data: [20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43],
       color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`, // Set the color of the line
       strokeWidth: 2, // Set the width of the line
     },
