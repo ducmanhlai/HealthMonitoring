@@ -4,7 +4,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 // import {LineChart} from 'react-native-charts-wrapper';
 import {LineChart} from 'react-native-chart-kit';
 
-
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../utils/components/header';
 import styles from './style';
@@ -31,24 +30,11 @@ function HomeScreen({navigation}) {
     <SafeAreaView>
       <Header navigation={navigation} />
       <View>
-        <Status/>
         <Moniter />
         <Chart />
       </View>
     </SafeAreaView>
   );
-}
-
-function Status(){
-  var status = false;
-  var statusColor = COLOR.red;
-  if(status) statusColor=COLOR.green; else statusColor=COLOR.red;
-  return(
-    <View style={styles.statusContainer}>
-      <View style={[styles.circle,{backgroundColor:statusColor}]}></View>
-      <Text style={styles.statusText}>{status? 'Kết nối' : 'Mất kết nối'}</Text>
-    </View>
-  )
 }
 
 function Moniter() {
@@ -64,19 +50,19 @@ function Moniter() {
     });
 
     const dbRef2 = firebase.database().ref('test/spo2');
-    dbRef.on('value', snapshot => {
+    dbRef2.on('value', snapshot => {
       const newData = snapshot.val();
       setSpo2(newData);
     });
 
     const dbRef3 = firebase.database().ref('test/bmp');
-    dbRef.on('value', snapshot => {
+    dbRef3.on('value', snapshot => {
       const newData = snapshot.val();
       setBMP(newData);
     });
 
     const dbRef4 = firebase.database().ref('test/temp');
-    dbRef.on('value', snapshot => {
+    dbRef4.on('value', snapshot => {
       const newData = snapshot.val();
       setTemp(newData);
     });
@@ -84,11 +70,24 @@ function Moniter() {
     // Return a cleanup function to remove the listener when the component unmounts
     return () => {
       dbRef.off('value');
+      dbRef2.off('value');
+      dbRef3.off('value');
+      dbRef4.off('value');
     };
   }, [firebase]);
+
   return (
     <View style={styles.container}>
-      <Text>{connect}</Text>
+      <View style={{left: -120, flexDirection: 'row'}}>
+        <View
+          style={[
+            styles.circle,
+            {backgroundColor: connect ? COLOR.green : COLOR.pink},
+          ]}></View>
+        <Text style={styles.statusText}>
+          {connect ? 'Kết nối' : 'Mất kết nối'}
+        </Text>
+      </View>
       <View style={styles.outerCircle}>
         <View style={styles.innerCircle}>
           <View style={styles.heartRateContainer}>
@@ -121,14 +120,27 @@ function Moniter() {
 }
 
 const data = {
-  labels:['12h', '11h', '10h', '9h', '8h', '7h', '6h', '5h', '4h', '3h', '2h', '1h trước'],
+  labels: [
+    '12h',
+    '11h',
+    '10h',
+    '9h',
+    '8h',
+    '7h',
+    '6h',
+    '5h',
+    '4h',
+    '3h',
+    '2h',
+    '1h trước',
+  ],
   datasets: [
     {
       data: [20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43],
       color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`, // Set the color of the line
-      strokeWidth: 2 // Set the width of the line
-    }
-  ]
+      strokeWidth: 2, // Set the width of the line
+    },
+  ],
 };
 
 const chartConfig = {
@@ -139,8 +151,7 @@ const chartConfig = {
   color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Set the color of the labels
   style: {
     borderRadius: 16,
-    
-  }
+  },
 };
 
 const Chart = () => {

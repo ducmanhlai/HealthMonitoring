@@ -104,16 +104,23 @@ function ProfileRegisterScreen({navigation}) {
       ToastAndroid.show('Cân nặng không hợp lệ!', ToastAndroid.SHORT);
       return false;
     }
-    if (yourPhone.trim().length < 10) {
+    if (yourPhone.trim().length != 10) {
       ToastAndroid.show(
         'Số điện thoại cá nhân phải đủ 10 số!',
         ToastAndroid.SHORT,
       );
       return false;
     }
-    if (relativePhone.trim().length < 10) {
+    if (relativePhone.trim().length != 10) {
       ToastAndroid.show(
         'Số điện thoại người thân phải đủ 10 số!',
+        ToastAndroid.SHORT,
+      );
+      return false;
+    }
+    if (yourPhone.trim() == relativePhone.trim()) {
+      ToastAndroid.show(
+        'Số điện thoại cá nhân và số điện người thân phải khác nhau!',
         ToastAndroid.SHORT,
       );
       return false;
