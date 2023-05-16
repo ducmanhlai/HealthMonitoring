@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const request = axios.create({
   baseURL: 'https://hethongnhung.azurewebsites.net/',
-
   responseType: 'json',
   withCredentials: true,
 });
