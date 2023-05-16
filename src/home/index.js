@@ -149,7 +149,6 @@ const Chart = () => {
     <View style={styles.containerChart}>
       <LineChart
         legend={{ enabled: true }}
-        
         style={{height:250}}
         data={{
           dataSets: [
@@ -188,6 +187,7 @@ const Chart = () => {
             },
           },
         }}
+        descriptionLabel={'Dữ'}
         xAxis={{ textColor: '#000000', textSize: 16,position: 'BOTTOM'}}
         yAxis={{ left: { textColor: '#000000', textSize: 16 }, right: null }}
       />

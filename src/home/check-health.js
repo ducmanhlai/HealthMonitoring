@@ -1,22 +1,24 @@
-import React, {useState} from 'react';
-import {SafeAreaView, Text, View, Button} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, Text, View, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 import Header from '../utils/components/header';
 import styles from './style';
-
-function CheckHealthScreen({navigation}) {
+import API from '../utils/api';
+import { post } from '../service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+function CheckHealthScreen({ navigation }) {
   const [showHealthCheck, setShowHealthCheck] = useState(true);
-
+  const [predict, setpredict] = useState('')
   //trả màn hình kiểm tra sức khỏe
   return (
     <SafeAreaView>
       <Header navigation={navigation} />
-      <View style={[styles.container, {paddingTop: 50}]}>
+      <View style={[styles.container, { paddingTop: 50 }]}>
         {showHealthCheck ? (
-          <HealthCheck setShowHealthCheck={setShowHealthCheck}/>
+          <HealthCheck setShowHealthCheck={setShowHealthCheck} predict={predict} />
         ) : (
-          <Confirm setShowHealthCheck={setShowHealthCheck} />
+          <Confirm setShowHealthCheck={setShowHealthCheck} setPredict={setpredict} />
         )}
       </View>
     </SafeAreaView>
@@ -24,12 +26,26 @@ function CheckHealthScreen({navigation}) {
 }
 
 //component xác nhận kiểm tra
-const Confirm = ({setShowHealthCheck}) => {
+const Confirm = ({ setShowHealthCheck, setPredict }) => {
   const [selectedCp, setSelectedCp] = useState("0");
   const [selectedExng, setSelectedExng] = useState("0");
-
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
+    const user = JSON.parse(await AsyncStorage.getItem('user'));
+    console.log(user)
     setShowHealthCheck(true);
+    console.log(selectedCp, selectedExng)
+    const tmp = await post(API.predict + `/${user.id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: user.accessToken,
+      },
+      body: {
+        cp: Number(selectedCp),
+        exng: Number(selectedExng)
+      }
+    })
+    console.log(tmp.data)
+    setPredict(tmp.data.docterSaid)
   };
 
   return (
@@ -70,12 +86,15 @@ const Confirm = ({setShowHealthCheck}) => {
 };
 
 //component trả về kết quả kiểm tra sức khỏe
-const HealthCheck = ({setShowHealthCheck}) => {
-
+const HealthCheck = ({ setShowHealthCheck, predict }) => {
+  const [text, setText] = useState(predict)
   const handleButtonClick = () => {
     setShowHealthCheck(false);
   };
-
+  useEffect(() => {
+    setText(predict)
+    console.log(predict)
+  }, [predict])
   return (
     <View style={styles.subContainer}>
       <Text style={styles.healthCheckTitle}>Nhịp tim(BPM):</Text>
@@ -123,18 +142,18 @@ const HealthCheck = ({setShowHealthCheck}) => {
       <View
         style={[
           styles.healthCheckContentContainer,
-          {justifyContent: 'space-around'},
+          { justifyContent: 'space-around' },
         ]}>
         <Text
           style={[styles.healthCheckContent, styles.healthCheckContentSpecial]}>
           Trung bình:37
         </Text>
       </View>
-      <Text style={{textAlign: 'center', marginTop: 5, fontSize: 22}}>
+      <Text style={{ textAlign: 'center', marginTop: 5, fontSize: 22 }}>
         Đánh giá sức khỏe:
       </Text>
-      <Text style={{textAlign: 'center', fontSize: 26, fontWeight: 'bold'}}>
-        Tốt
+      <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+        {text ?  text:'Tốt' }
       </Text>
       <Button
         style={styles.confirmButton}
@@ -149,7 +168,7 @@ const HealthCheck = ({setShowHealthCheck}) => {
 
 // 36 - 37.5 bình thường
 // đuôi trừ đầu
-const Ruler = ({value, normalStart, normalEnd, first = 34, last = 39}) => {
+const Ruler = ({ value, normalStart, normalEnd, first = 34, last = 39 }) => {
   const rulerWidth = 300; // Độ dài của thanh thước
   const sectionWidth = rulerWidth / 3; // Độ rộng của mỗi vùng màu
 
@@ -182,28 +201,28 @@ const Ruler = ({value, normalStart, normalEnd, first = 34, last = 39}) => {
       <View
         style={[
           styles.rulerSection,
-          {backgroundColor: 'yellow', width: sectionWidth},
+          { backgroundColor: 'yellow', width: sectionWidth },
         ]}>
         {value <= 36 && (
-          <Text style={[styles.arrow, {left: arrowLeft(value)}]}>▼</Text>
+          <Text style={[styles.arrow, { left: arrowLeft(value) }]}>▼</Text>
         )}
       </View>
       <View
         style={[
           styles.rulerSection,
-          {backgroundColor: 'green', width: sectionWidth},
+          { backgroundColor: 'green', width: sectionWidth },
         ]}>
         {value > 36 && value < 37.5 && (
-          <Text style={[styles.arrow, {left: arrowLeft(value)}]}>▼</Text>
+          <Text style={[styles.arrow, { left: arrowLeft(value) }]}>▼</Text>
         )}
       </View>
       <View
         style={[
           styles.rulerSection,
-          {backgroundColor: 'red', width: sectionWidth},
+          { backgroundColor: 'red', width: sectionWidth },
         ]}>
         {value >= 37.5 && (
-          <Text style={[styles.arrow, {left: arrowLeft(value)}]}>▼</Text>
+          <Text style={[styles.arrow, { left: arrowLeft(value) }]}>▼</Text>
         )}
       </View>
     </View>

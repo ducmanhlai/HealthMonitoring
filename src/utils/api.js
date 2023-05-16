@@ -6,7 +6,8 @@ const API = {
   changPassword: '/account/change-password',
   getToken: '/account/token',
   getHistory:'/history/get',
-  getNearest:'/history/get/nearest'
+  getNearest:'/history/get/nearest',
+  predict:'/api/predict/data'
 };
 
 export default API;
