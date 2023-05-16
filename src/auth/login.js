@@ -64,6 +64,7 @@ function LoginScreen({navigation}) {
             id: account.userInfo['_id'],
             name: account.userInfo.name,
             imageUrl: account.userInfo.imageUrl,
+            idInfo:account.userInfo,
             gender: account.userInfo.gender,
             birthDay: account.userInfo.birthDay,
             phoneNumber: account.userInfo.phoneNumber,
