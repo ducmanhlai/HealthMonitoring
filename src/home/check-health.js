@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import {SafeAreaView, Text, View, Button} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 import Header from '../utils/components/header';
 import styles from './style';
 
 function CheckHealthScreen({navigation}) {
-  const [showHealthCheck, setShowHealthCheck] = useState(false);
+  const [showHealthCheck, setShowHealthCheck] = useState(true);
 
   //trả màn hình kiểm tra sức khỏe
   return (
@@ -13,7 +14,7 @@ function CheckHealthScreen({navigation}) {
       <Header navigation={navigation} />
       <View style={[styles.container, {paddingTop: 50}]}>
         {showHealthCheck ? (
-          <HealthCheck />
+          <HealthCheck setShowHealthCheck={setShowHealthCheck}/>
         ) : (
           <Confirm setShowHealthCheck={setShowHealthCheck} />
         )}
@@ -24,6 +25,9 @@ function CheckHealthScreen({navigation}) {
 
 //component xác nhận kiểm tra
 const Confirm = ({setShowHealthCheck}) => {
+  const [selectedCp, setSelectedCp] = useState("0");
+  const [selectedExng, setSelectedExng] = useState("0");
+
   const handleButtonClick = () => {
     setShowHealthCheck(true);
   };
@@ -31,8 +35,30 @@ const Confirm = ({setShowHealthCheck}) => {
   return (
     <View style={[styles.subContainer, styles.confirmContainer]}>
       <Text style={styles.confirmTitle}>
-        Bạn có xác nhận kiểm tra sức khỏe?
+        Kiểm tra sức khỏe:
       </Text>
+      <View>
+        <Text>Tình trạng đau ngực:</Text>
+        <Picker
+          selectedValue={selectedCp}
+          onValueChange={(itemValue, itemIndex) => setSelectedCp(itemValue)}
+        >
+          <Picker.Item label="Không có triệu chứng đau ngực" value="0" />
+          <Picker.Item label="Đau ngực nhẹ nhàng hoặc không thoải mái" value="1" />
+          <Picker.Item label="Đau ngực ở mức đủ để gây khó chịu và ảnh hưởng đến hoạt động" value="2" />
+          <Picker.Item label="Đau ngực cực kỳ nghiêm trọng và không thể chịu đựng được" value="3" />
+        </Picker>
+
+        <Text>Tình trạng đau ngực sau vận động:</Text>
+        <Picker
+          selectedValue={selectedExng}
+          onValueChange={(itemValue, itemIndex) => setSelectedExng(itemValue)}
+        >
+          <Picker.Item label="Có" value="1" />
+          <Picker.Item label="Không" value="0" />
+
+        </Picker>
+      </View>
       <Button
         style={styles.confirmButton}
         title="Xác nhận"
@@ -44,7 +70,12 @@ const Confirm = ({setShowHealthCheck}) => {
 };
 
 //component trả về kết quả kiểm tra sức khỏe
-const HealthCheck = () => {
+const HealthCheck = ({setShowHealthCheck}) => {
+
+  const handleButtonClick = () => {
+    setShowHealthCheck(false);
+  };
+
   return (
     <View style={styles.subContainer}>
       <Text style={styles.healthCheckTitle}>Nhịp tim(BPM):</Text>
@@ -99,12 +130,19 @@ const HealthCheck = () => {
           Trung bình:37
         </Text>
       </View>
-      <Text style={{textAlign: 'center', marginTop: 10, fontSize: 26}}>
+      <Text style={{textAlign: 'center', marginTop: 5, fontSize: 22}}>
         Đánh giá sức khỏe:
       </Text>
-      <Text style={{textAlign: 'center', fontSize: 38, fontWeight: 'bold'}}>
+      <Text style={{textAlign: 'center', fontSize: 26, fontWeight: 'bold'}}>
         Tốt
       </Text>
+      <Button
+        style={styles.confirmButton}
+        title="Trở lại kiểm tra sức khỏe"
+        onPress={handleButtonClick}
+        color="green"
+        width="80"
+      />
     </View>
   );
 };

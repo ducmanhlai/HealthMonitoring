@@ -21,8 +21,15 @@ import API from '../utils/api';
 import Header from '../utils/components/header';
 import Item from './components/Item';
 import COLOR from '../utils/color';
+import RedictItem from './components/RedictItem';
+import SwitchSelector from "react-native-switch-selector";
+
 const COLOR_RED = processColor('#FF0000');
 function History({ navigation }) {
+  const [history, setHistory] = useState(true);
+  const handleButtonClick = (value) => {
+    setHistory(value);
+  };
   const [user, setUser] = useState({});
   const [openFrom, setOpenFrom] = useState(false);
   const [openTo, setOpenTo] = useState(false);
@@ -59,8 +66,33 @@ function History({ navigation }) {
   return (
     <View style={{ height: '100%', flex: 1, flexDirection: 'column' }}>
       <Header navigation={navigation} />
-      <Chart />
-      <ListHistory />
+      <View style={{paddingHorizontal:40}}>
+        <SwitchSelector
+          initial={0}
+          onPress={value => handleButtonClick(value)}
+          textColor={COLOR.black}
+          selectedColor={COLOR.black}
+          buttonColor={COLOR.primary}
+          borderColor={COLOR.primary}
+          hasPadding
+          options={[
+            { label: "Lịch sử đo nhịp tim", value: true}, 
+            { label: "Lịch sử kiểm tra sức khỏe", value: false}
+          ]}
+          testID="gender-switch-selector"
+          accessibilityLabel="gender-switch-selector"
+        />
+      </View>
+      {history?(
+        <View style={{ height: '100%', flex: 1, flexDirection: 'column' }}>
+          <Chart />
+          <ListHistory />
+        </View>
+      ):(
+        <View style={{ height: '100%', flex: 1, flexDirection: 'column'}}>
+          <ListRedictHistory/>
+        </View>
+      )}
     </View>
   );
   function joinByDate() {
@@ -224,6 +256,36 @@ function History({ navigation }) {
             </View>
           }
           >
+          </FlatList>
+      </SafeAreaView>
+    );
+  }
+  function ListRedictHistory() {
+    return (
+      <SafeAreaView
+        style={{
+          width: '100%',
+          flex: 3,
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf: 'center',
+          backgroundColor: '#F5FCFF',
+        }}>
+        <FlatList
+          data={joinByDate().filter(item=>{
+            return item.isShow
+          })}
+          style={{ height: '100%', width: '80%', backgroundColor: '#F5FCFF' }}
+          contentContainerStyle={{ flexGrow: 10 }}
+          scrollEnabled={true}
+          renderItem={item => RedictItem(item)}
+          ListEmptyComponent={
+            <View style={{justifyContent:'center',alignItems:'center',height: '100%', width: '100%',}}>
+              <Text style={{color:'black',fontSize:18}}>Không có dữ liệu</Text>
+            </View>
+          }
+          >
+          
           </FlatList>
       </SafeAreaView>
     );
