@@ -52,6 +52,7 @@ function History({ navigation }) {
       .then(data => {
         setUser(JSON.parse(data));
         getHistory(JSON.parse(data).accessToken).catch(err => console.log(err));
+        console.log(listHistory)
       })
       .catch(err => console.log(err));
   }, []);
@@ -223,7 +224,6 @@ function History({ navigation }) {
             </View>
           }
           >
-          
           </FlatList>
       </SafeAreaView>
     );
