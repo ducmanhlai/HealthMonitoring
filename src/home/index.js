@@ -1,17 +1,17 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { SafeAreaView, Text, View, Dimensions } from 'react-native';
+import React, {useState, useContext, useEffect} from 'react';
+import {SafeAreaView, Text, View, Dimensions} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { LineChart } from 'react-native-charts-wrapper';
+import {LineChart} from 'react-native-charts-wrapper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../utils/components/header';
 import styles from './style';
-import { MenuProvider } from 'react-native-popup-menu';
-import { processColor } from 'react-native';
+import {MenuProvider} from 'react-native-popup-menu';
+import {processColor} from 'react-native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import COLOR from '../utils/color';
-import { get } from '../service';
+import {get} from '../service/index';
 import API from '../utils/api';
 const firebaseConfig = {
   apiKey: 'AIzaSyD8f6u7pcZS96aDABfvlVB06B4PVw5CUQY',
@@ -25,7 +25,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-function HomeScreen({ navigation }) {
+function HomeScreen({navigation}) {
   return (
     <SafeAreaView>
       <Header navigation={navigation} />
@@ -78,11 +78,11 @@ function Moniter() {
 
   return (
     <View style={styles.container}>
-      <View style={{ left: -120, flexDirection: 'row' }}>
+      <View style={{left: -120, flexDirection: 'row'}}>
         <View
           style={[
             styles.circle,
-            { backgroundColor: connect ? COLOR.green : COLOR.pink },
+            {backgroundColor: connect ? COLOR.green : COLOR.pink},
           ]}></View>
         <Text style={styles.statusText}>
           {connect ? 'Kết nối' : 'Mất kết nối'}
@@ -95,7 +95,7 @@ function Moniter() {
               name="heart"
               color="red"
               size={18}
-              style={{ textAlign: 'center' }}
+              style={{textAlign: 'center'}}
             />
             <Text style={styles.heartRateText}>{bmp}</Text>
             <Text style={styles.heartRateUnit}>BPM</Text>
@@ -119,11 +119,11 @@ function Moniter() {
   );
 }
 const Chart = () => {
-  const [dataHeart, setDataHeart] = useState([])
-  const [dataSpO2, setDataSpO2] = useState([])
+  const [dataHeart, setDataHeart] = useState([]);
+  const [dataSpO2, setDataSpO2] = useState([]);
   useEffect(() => {
     (async () => {
-      const user = JSON.parse(await getUser())
+      const user = JSON.parse(await getUser());
       const tmp = await get(API.getNearest, {
         headers: {
           'Content-Type': 'application/json',
@@ -131,25 +131,36 @@ const Chart = () => {
         },
       });
 
-      setDataHeart(tmp.data.map((item, index) => {
-        return {
-          x: Number(item.hour),
-          y: Math.round(item.heartRate),
-        };
-      }))
-      setDataSpO2(tmp.data.map((item, index) => {
-        return {
-          x: Number(item.hour),
-          y: Math.round(item.spO2),
-        };
-      }))
-    })().catch(err => console.log(err))
-  }, [])
+      // const tmp = await request.get(API.getNearest, {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     authorization: user.accessToken,
+      //   },
+      // });
+
+      setDataHeart(
+        tmp.data.map((item, index) => {
+          return {
+            x: Number(item.hour),
+            y: Math.round(item.heartRate),
+          };
+        }),
+      );
+      setDataSpO2(
+        tmp.data.map((item, index) => {
+          return {
+            x: Number(item.hour),
+            y: Math.round(item.spO2),
+          };
+        }),
+      );
+    })().catch(err => console.log(err));
+  }, []);
   return (
     <View style={styles.containerChart}>
       <LineChart
-        legend={{ enabled: true }}
-        style={{height:250}}
+        legend={{enabled: true}}
+        style={{height: 250}}
         data={{
           dataSets: [
             {
@@ -158,8 +169,7 @@ const Chart = () => {
               config: {
                 lineWidth: 2,
                 drawCircles: false,
-                color: [processColor('blue')],
-        
+                colors: [processColor('blue')],
               },
             },
             {
@@ -168,10 +178,10 @@ const Chart = () => {
               config: {
                 lineWidth: 2,
                 drawCircles: false,
-                colors: [ processColor('red')],
-                borderColor: 'red'
+                colors: [processColor('red')],
+                borderColor: 'red',
               },
-            }
+            },
           ],
           config: {
             xAxis: {
@@ -183,13 +193,12 @@ const Chart = () => {
             yAxis: {
               drawLabels: true,
               drawGridLines: true,
-           
             },
           },
         }}
         descriptionLabel={'Dữ'}
-        xAxis={{ textColor: '#000000', textSize: 16,position: 'BOTTOM'}}
-        yAxis={{ left: { textColor: '#000000', textSize: 16 }, right: null }}
+        xAxis={{textColor: '#000000', textSize: 16, position: 'BOTTOM'}}
+        yAxis={{left: {textColor: '#000000', textSize: 16}, right: null}}
       />
     </View>
   );

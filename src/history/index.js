@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import {useState} from 'react';
+import {useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,25 +9,26 @@ import {
   processColor,
   FlatList,
   SafeAreaView,
-  TouchableOpacity, TextInput
+  TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import DatePicker from 'react-native-date-picker';
-import { LineChart } from 'react-native-charts-wrapper';
-import { get } from '../service';
+import {LineChart} from 'react-native-charts-wrapper';
+import {get} from '../service';
 import API from '../utils/api';
 import Header from '../utils/components/header';
 import Item from './components/Item';
 import COLOR from '../utils/color';
 import RedictItem from './components/RedictItem';
-import SwitchSelector from "react-native-switch-selector";
+import SwitchSelector from 'react-native-switch-selector';
 
 const COLOR_RED = processColor('#FF0000');
-function History({ navigation }) {
+function History({navigation}) {
   const [history, setHistory] = useState(true);
-  const handleButtonClick = (value) => {
+  const handleButtonClick = value => {
     setHistory(value);
   };
   const [user, setUser] = useState({});
@@ -59,14 +60,13 @@ function History({ navigation }) {
       .then(data => {
         setUser(JSON.parse(data));
         getHistory(JSON.parse(data).accessToken).catch(err => console.log(err));
-        console.log(listHistory)
       })
       .catch(err => console.log(err));
   }, []);
   return (
-    <View style={{ height: '100%', flex: 1, flexDirection: 'column' }}>
+    <View style={{height: '100%', flex: 1, flexDirection: 'column'}}>
       <Header navigation={navigation} />
-      <View style={{paddingHorizontal:40}}>
+      <View style={{paddingHorizontal: 40}}>
         <SwitchSelector
           initial={0}
           onPress={value => handleButtonClick(value)}
@@ -76,73 +76,83 @@ function History({ navigation }) {
           borderColor={COLOR.primary}
           hasPadding
           options={[
-            { label: "Lịch sử đo nhịp tim", value: true}, 
-            { label: "Lịch sử kiểm tra sức khỏe", value: false}
+            {label: 'Lịch sử đo nhịp tim', value: true},
+            {label: 'Lịch sử kiểm tra sức khỏe', value: false},
           ]}
           testID="gender-switch-selector"
           accessibilityLabel="gender-switch-selector"
         />
       </View>
-      {history?(
-        <View style={{ height: '100%', flex: 1, flexDirection: 'column' }}>
+      {history ? (
+        <View style={{height: '100%', flex: 1, flexDirection: 'column'}}>
           <Chart />
           <ListHistory />
         </View>
-      ):(
-        <View style={{ height: '100%', flex: 1, flexDirection: 'column'}}>
-          <ListRedictHistory/>
+      ) : (
+        <View
+          style={{
+            height: '100%',
+            flex: 1,
+            flexDirection: 'column',
+          }}>
+          <ListRedictHistory />
         </View>
       )}
     </View>
   );
   function joinByDate() {
-    const result = {}
-    var resultList = []
+    const result = {};
+    var resultList = [];
     listHistory.forEach(item => {
-      const { date, ...rest } = item;
+      const {date, ...rest} = item;
       if (!result[date]) {
         result[date] = [rest];
       } else {
         result[date].push(rest);
       }
       resultList = Object.entries(result).map(([date, groupedObjects]) => {
-        return { date, values: groupedObjects };
+        return {date, values: groupedObjects};
       });
     });
 
     const total = resultList.map(element => {
-      const len = element.values.length
+      const len = element.values.length;
       const newElement = {
         date: element.date,
-        values: element.values.reduce((acc, cur) => {
-          acc.oxy += cur.oxy;
-          acc.x += cur.x;
-          acc.y += cur.y;
-          return acc
-        }, { oxy: 0, x: 0, y: 0 })
-      }
-      
+        values: element.values.reduce(
+          (acc, cur) => {
+            acc.oxy += cur.oxy;
+            acc.x += cur.x;
+            acc.y += cur.y;
+            return acc;
+          },
+          {oxy: 0, x: 0, y: 0},
+        ),
+      };
+
       return {
         date: newElement.date,
         oxy: Math.trunc(newElement.values.oxy / len),
         x: Math.trunc(newElement.values.x / len),
         y: Math.trunc(newElement.values.y / len),
-        isShow: compareDates(newElement.date,dateTo)==-1 && compareDates(newElement.date,dateFrom)==1
-      }
-    })
-    return total
+        isShow:
+          compareDates(newElement.date, dateTo) == -1 &&
+          compareDates(newElement.date, dateFrom) == 1,
+      };
+    });
+    return total;
   }
   function Chart() {
     return (
-      <View style={{ marginTop: 10 }}>
+      <View style={{marginTop: 10}}>
         <View style={styles.container_chart}>
           <LineChart
             style={styles.chart}
             data={{
               dataSets: [
                 {
-                  values: joinByDate().filter(item=>{
-                    return item.isShow
+                  values: joinByDate().filter(item => {
+                    return item.isShow;
                   }),
                   label: 'Nhịp tim',
                   config: {
@@ -170,18 +180,18 @@ function History({ navigation }) {
                 drawGridLines: true,
               },
             }}
-            chartDescription={{ text: '' }}
+            chartDescription={{text: ''}}
             autoScaleMinMaxEnabled={true}
           />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <Text style={{ marginLeft: 20, marginTop: 13, color: 'black' }}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            <Text style={{marginLeft: 20, marginTop: 13, color: 'black'}}>
               Dữ liệu từ
             </Text>
             <TouchableOpacity onPress={() => setOpenFrom(true)}>
               <View>
                 <TextInput
                   value={moment(dateFrom).format('DD/MM/YYYY')} // Display selected date in TextInput
-                  style={{ color: 'black' }}
+                  style={{color: 'black'}}
                   editable={false} // Disable editing of TextInput
                 />
                 <Entypo name="calendar" size={30} color={COLOR.sencondary} />
@@ -200,14 +210,14 @@ function History({ navigation }) {
                 setOpenFrom(false);
               }}
             />
-            <Text style={{ marginLeft: 20, marginTop: 13, color: 'black' }}>
+            <Text style={{marginLeft: 20, marginTop: 13, color: 'black'}}>
               Đến
             </Text>
             <TouchableOpacity onPress={() => setOpenTo(true)}>
               <View>
                 <TextInput
                   value={moment(dateTo).format('DD/MM/YYYY')} // Display selected date in TextInput
-                  style={{ color: 'black' }}
+                  style={{color: 'black'}}
                   editable={false} // Disable editing of TextInput
                 />
                 <Entypo name="calendar" size={30} color={COLOR.sencondary} />
@@ -243,20 +253,26 @@ function History({ navigation }) {
           backgroundColor: '#F5FCFF',
         }}>
         <FlatList
-          data={joinByDate().filter(item=>{
-            return item.isShow
+          data={joinByDate().filter(item => {
+            return item.isShow;
           })}
-          style={{ height: '100%', width: '80%', backgroundColor: '#F5FCFF' }}
-          contentContainerStyle={{ flexGrow: 10 }}
+          style={{height: '100%', width: '80%', backgroundColor: '#F5FCFF'}}
+          contentContainerStyle={{flexGrow: 10}}
           scrollEnabled={true}
           renderItem={item => Item(item)}
           ListEmptyComponent={
-            <View style={{justifyContent:'center',alignItems:'center',height: '100%', width: '100%',}}>
-              <Text style={{color:'black',fontSize:18}}>Không có dữ liệu</Text>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+                width: '100%',
+              }}>
+              <Text style={{color: 'black', fontSize: 18}}>
+                Không có dữ liệu
+              </Text>
             </View>
-          }
-          >
-          </FlatList>
+          }></FlatList>
       </SafeAreaView>
     );
   }
@@ -272,21 +288,32 @@ function History({ navigation }) {
           backgroundColor: '#F5FCFF',
         }}>
         <FlatList
-          data={joinByDate().filter(item=>{
-            return item.isShow
+          data={joinByDate().filter(item => {
+            return item.isShow;
           })}
-          style={{ height: '100%', width: '80%', backgroundColor: '#F5FCFF' }}
-          contentContainerStyle={{ flexGrow: 10 }}
+          style={{
+            height: '100%',
+            width: '95%',
+            marginLeft: 10,
+            marginRight: 10,
+            backgroundColor: '#F5FCFF',
+          }}
+          contentContainerStyle={{flexGrow: 10}}
           scrollEnabled={true}
           renderItem={item => RedictItem(item)}
           ListEmptyComponent={
-            <View style={{justifyContent:'center',alignItems:'center',height: '100%', width: '100%',}}>
-              <Text style={{color:'black',fontSize:18}}>Không có dữ liệu</Text>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+                width: '100%',
+              }}>
+              <Text style={{color: 'black', fontSize: 18}}>
+                Không có dữ liệu
+              </Text>
             </View>
-          }
-          >
-          
-          </FlatList>
+          }></FlatList>
       </SafeAreaView>
     );
   }
@@ -306,16 +333,17 @@ const styles = StyleSheet.create({
   },
 });
 const compareDates = (d1, d2) => {
-  let tmp=d1.split('/')
-  let date1 = new Date(+tmp[2],  tmp[1] -1, + tmp[0]);
-  date1=date1.getTime()
+  let tmp = d1.split('/');
+  let date1 = new Date(tmp[2], tmp[0] - 1, tmp[1]);
+  date1 = date1.getTime();
   let date2 = new Date(d2).getTime();
   if (date1 < date2) {
-    return -1
+    return -1;
   } else if (date1 > date2) {
-    return 1
+    return 1;
   } else {
-    return 0
+    return 0;
   }
 };
+
 export default History;

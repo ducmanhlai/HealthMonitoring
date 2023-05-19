@@ -1,13 +1,15 @@
 import axios from 'axios';
 
 const request = axios.create({
-  baseURL: 'https://hethongnhung.azurewebsites.net/',
+  // baseURL: 'https://hethongnhung.azurewebsites.net/',
+  baseURL: 'http://192.168.1.20:3000',
   responseType: 'json',
   withCredentials: true,
 });
 
 export const get = async (path, options = {}) => {
   const response = await request.get(path, options);
+
   return response.data;
 };
 
