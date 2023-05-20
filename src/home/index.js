@@ -13,6 +13,7 @@ import 'firebase/compat/database';
 import COLOR from '../utils/color';
 import {get} from '../service/index';
 import API from '../utils/api';
+import {debounce} from 'lodash';
 const firebaseConfig = {
   apiKey: 'AIzaSyD8f6u7pcZS96aDABfvlVB06B4PVw5CUQY',
   databaseURL: 'https://fir-authall-37df8-default-rtdb.firebaseio.com',
@@ -46,7 +47,9 @@ function Moniter() {
     const dbRef = firebase.database().ref('test/led');
     dbRef.on('value', snapshot => {
       const newData = snapshot.val();
+      dbRef.set(0);
       setConnect(newData);
+      handleSearch(connect);
     });
 
     const dbRef2 = firebase.database().ref('test/spo2');
@@ -60,6 +63,12 @@ function Moniter() {
       const newData = snapshot.val();
       setBMP(newData);
     });
+
+    const handleSearch = debounce(value => {
+      // Thực hiện logic tìm kiếm hoặc xử lý dữ liệu tại đây
+      console.log('Searching for:', value);
+      setConnect(0);
+    }, 5000);
 
     const dbRef4 = firebase.database().ref('test/temp');
     dbRef4.on('value', snapshot => {
