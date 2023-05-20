@@ -130,6 +130,8 @@ function History({navigation}) {
         ),
       };
 
+      console.log('newElement: ', newElement);
+
       return {
         date: newElement.date,
         oxy: Math.trunc(newElement.values.oxy / len),
