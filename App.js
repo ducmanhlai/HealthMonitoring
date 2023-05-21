@@ -8,11 +8,20 @@ const AppContext = createContext();
 const AppContextProvider = ({children}) => {
   const [user, setUser] = useState('');
   const [isLogin, setIsLogin] = useState('');
+  const [spo2, setSpo2] = useState(0);
+  const [bmp, setBMP] = useState(0);
+  const [temp, setTemp] = useState(0);
   const contextValues = {
     user,
     setUser,
     isLogin,
     setIsLogin,
+    spo2,
+    setSpo2,
+    bmp,
+    setBMP,
+    temp,
+    setTemp,
   };
 
   return (
