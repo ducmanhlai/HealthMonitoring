@@ -111,6 +111,7 @@ function ProfileRegisterScreen({navigation}) {
       );
       return false;
     }
+
     if (relativePhone.trim().length != 10) {
       ToastAndroid.show(
         'Số điện thoại người thân phải đủ 10 số!',
@@ -118,6 +119,7 @@ function ProfileRegisterScreen({navigation}) {
       );
       return false;
     }
+
     if (yourPhone.trim() == relativePhone.trim()) {
       ToastAndroid.show(
         'Số điện thoại cá nhân và số điện người thân phải khác nhau!',
@@ -170,8 +172,8 @@ function ProfileRegisterScreen({navigation}) {
     }
   }
 
-  const takePicture = () => {
-    requestCameraPermission();
+  const takePicture = async () => {
+    await requestCameraPermission();
     const options = {
       title: 'Chọn ảnh',
       storageOptions: {
@@ -310,12 +312,10 @@ function ProfileRegisterScreen({navigation}) {
             />
           </View>
           <View style={styles.viewInputInfor2}>
-            <Text style={styles.txtTitleInpurInfor}>
-              Số điện thoại (người thân)
-            </Text>
+            <Text style={styles.txtTitleInpurInfor}>Email (người thân)</Text>
             <TextInput
               style={styles.inputInfor}
-              placeholder="Nhập số điện thoại người thân"
+              placeholder="Nhập số email người thân"
               keyboardType="numeric"
               onChangeText={newtext => setRelativePhone(newtext)}
             />

@@ -40,7 +40,9 @@ function ProfileScreen({navigation}) {
   );
 
   const [responseImage, setResponseImage] = useState(
-    `https://freesvg.org/img/abstract-user-flat-4.png`,
+    isLogin
+      ? user.imageUrl
+      : `https://freesvg.org/img/abstract-user-flat-4.png`,
   );
   const chooseImage = () => {
     let options = {
@@ -144,6 +146,7 @@ function ProfileScreen({navigation}) {
         console.log('Camera permission granted');
         ToastAndroid.show('Đã cấp quyền truy cập máy ảnh!', ToastAndroid.SHORT);
       } else {
+        console.log(granted);
         console.log('Camera permission denied');
         ToastAndroid.show(
           'Đã từ chối quyền truy cập máy ảnh!',
@@ -156,8 +159,8 @@ function ProfileScreen({navigation}) {
     }
   }
 
-  const takePicture = () => {
-    requestCameraPermission();
+  const takePicture = async () => {
+    await requestCameraPermission();
     const options = {
       title: 'Chọn ảnh',
       storageOptions: {
@@ -228,7 +231,7 @@ function ProfileScreen({navigation}) {
               familyPhoneNumber: relativePhone,
               height: height,
               weight: weight,
-              accessToken: user.authorization,
+              accessToken: user.accessToken,
               refreshToken: user.refreshToken,
             };
 

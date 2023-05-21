@@ -133,13 +133,14 @@ const Chart = () => {
   useEffect(() => {
     (async () => {
       const user = JSON.parse(await getUser());
+      console.log('user: ', user);
       const tmp = await get(API.getNearest, {
         headers: {
           'Content-Type': 'application/json',
           authorization: user.accessToken,
         },
       });
-
+      console.log('tmp: ', tmp);
       // const tmp = await request.get(API.getNearest, {
       //   headers: {
       //     'Content-Type': 'application/json',
