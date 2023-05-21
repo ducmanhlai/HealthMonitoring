@@ -14,6 +14,7 @@ import COLOR from '../utils/color';
 import {get} from '../service/index';
 import API from '../utils/api';
 import {debounce} from 'lodash';
+import {AppContext} from '../../App';
 const firebaseConfig = {
   apiKey: 'AIzaSyD8f6u7pcZS96aDABfvlVB06B4PVw5CUQY',
   databaseURL: 'https://fir-authall-37df8-default-rtdb.firebaseio.com',
@@ -40,9 +41,10 @@ function HomeScreen({navigation}) {
 
 function Moniter() {
   const [connect, setConnect] = useState(0);
-  const [spo2, setSpo2] = useState(0);
-  const [bmp, setBMP] = useState(0);
-  const [temp, setTemp] = useState(0);
+  // const [spo2, setSpo2] = useState(0);
+  // const [bmp, setBMP] = useState(0);
+  // const [temp, setTemp] = useState(0);
+  const {spo2, setSpo2, bmp, setBMP, temp, setTemp} = useContext(AppContext);
   useEffect(() => {
     const dbRef = firebase.database().ref('test/led');
     dbRef.on('value', snapshot => {
@@ -140,7 +142,7 @@ const Chart = () => {
           authorization: user.accessToken,
         },
       });
-      console.log('tmp: ', tmp);
+
       // const tmp = await request.get(API.getNearest, {
       //   headers: {
       //     'Content-Type': 'application/json',

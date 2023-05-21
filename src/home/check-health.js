@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {SafeAreaView, Text, View, Button} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 
@@ -7,6 +7,7 @@ import styles from './style';
 import API from '../utils/api';
 import {post} from '../service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AppContext} from '../../App';
 function CheckHealthScreen({navigation}) {
   const [showHealthCheck, setShowHealthCheck] = useState(true);
   const [predict, setpredict] = useState('');
@@ -100,7 +101,9 @@ const Confirm = ({setShowHealthCheck, setPredict}) => {
 
 //component trả về kết quả kiểm tra sức khỏe
 const HealthCheck = ({setShowHealthCheck, predict}) => {
+  const {spo2, setSpo2, bmp, setBMP, temp, setTemp} = useContext(AppContext);
   const [text, setText] = useState(predict);
+
   const handleButtonClick = () => {
     setShowHealthCheck(false);
   };
@@ -110,9 +113,9 @@ const HealthCheck = ({setShowHealthCheck, predict}) => {
   }, [predict]);
   return (
     <View style={styles.subContainer}>
-      <Text style={styles.healthCheckTitle}>Nhịp tim(BPM):</Text>
+      <Text style={styles.healthCheckTitle}>Nhịp tim(BPM): {bmp} bmp</Text>
       <Ruler
-        value={35}
+        value={bmp}
         normalStart={36}
         normalEnd={37.5}
         first={34}
@@ -127,9 +130,9 @@ const HealthCheck = ({setShowHealthCheck, predict}) => {
         <Text style={styles.healthCheckContent}>Cao nhất:110</Text>
       </View>
 
-      <Text style={styles.healthCheckTitle}>Nồng độ oxy(%SpO2):</Text>
+      <Text style={styles.healthCheckTitle}>Nồng độ oxy(SpO2): {spo2} % </Text>
       <Ruler
-        value={35}
+        value={spo2}
         normalStart={36}
         normalEnd={37.5}
         first={34}
@@ -144,10 +147,12 @@ const HealthCheck = ({setShowHealthCheck, predict}) => {
         <Text style={styles.healthCheckContent}>Cao nhất:110</Text>
       </View>
 
-      <Text style={styles.healthCheckTitle}>Nhiệt độ:(độ C)</Text>
+      <Text style={styles.healthCheckTitle}>
+        Nhiệt độ(Temp): {Number(temp)} *C
+      </Text>
       <Ruler
-        value={37}
-        normalStart={36}
+        value={temp}
+        normalStart={36.3}
         normalEnd={37.5}
         first={34}
         last={39}
@@ -157,10 +162,12 @@ const HealthCheck = ({setShowHealthCheck, predict}) => {
           styles.healthCheckContentContainer,
           {justifyContent: 'space-around'},
         ]}>
+        <Text style={styles.healthCheckContent}>Thấp nhất: 96</Text>
         <Text
           style={[styles.healthCheckContent, styles.healthCheckContentSpecial]}>
           Trung bình:37
         </Text>
+        <Text style={styles.healthCheckContent}>Thấp nhất: 96</Text>
       </View>
       <Text style={{textAlign: 'center', marginTop: 5, fontSize: 22}}>
         Đánh giá sức khỏe:
