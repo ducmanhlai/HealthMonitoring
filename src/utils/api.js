@@ -7,7 +7,8 @@ const API = {
   getToken: '/account/token',
   getHistory:'/history/get',
   getNearest:'/history/get/nearest',
-  predict:'/api/predict/data'
+  predict:'/api/predict/data',
+  createDate:'/data/create',
 };
 
 export default API;

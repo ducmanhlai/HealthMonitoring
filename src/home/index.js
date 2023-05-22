@@ -11,6 +11,7 @@ import {processColor} from 'react-native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import COLOR from '../utils/color';
+import * as request from '../service/index';
 import {get} from '../service/index';
 import API from '../utils/api';
 import {debounce} from 'lodash';
@@ -45,7 +46,7 @@ function Moniter() {
   // const [bmp, setBMP] = useState(0);
   // const [temp, setTemp] = useState(0);
   const {spo2, setSpo2, bmp, setBMP, temp, setTemp} = useContext(AppContext);
-  useEffect(() => {
+  useEffect(async () => {
     const dbRef = firebase.database().ref('test/led');
     dbRef.on('value', snapshot => {
       const newData = snapshot.val();
@@ -78,6 +79,7 @@ function Moniter() {
       setTemp(newData);
     });
 
+    await saveData();
     // Return a cleanup function to remove the listener when the component unmounts
     return () => {
       dbRef.off('value');
@@ -86,6 +88,26 @@ function Moniter() {
       dbRef4.off('value');
     };
   }, [firebase]);
+
+  const saveData = async () => {
+    try {
+      const response = await request.postPrivate(
+        API,
+        {
+          id: user.id,
+          heartRate: bmp,
+          SpO2: spo2,
+          temp: temp,
+        },
+        {headers: {authorization: user.accessToken}},
+      );
+      if (response.data.status == false) {
+        console.log(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
