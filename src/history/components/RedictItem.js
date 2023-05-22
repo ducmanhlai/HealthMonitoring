@@ -26,17 +26,13 @@ function RedictItem(props) {
             <Text style={{fontSize: 25, lineHeight: 30, color: 'red'}}>O</Text>
             <Text style={{fontSize: 11, lineHeight: 45, color: 'red'}}>2</Text>
             <Text style={{fontSize: 20, lineHeight: 30}}>:</Text>
-            <Text style={{fontSize: 18, lineHeight: 30}}>{data.oxy}% SpO</Text>
-            <Text style={{fontSize: 11, lineHeight: 45, color: 'red'}}>2</Text>
+            <Text style={{fontSize: 18, lineHeight: 30}}>{data.oxy}%</Text>
           </View>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <FontAwesome5 name="temperature-low" size={30} color="red" />
           <Text style={{fontSize: 18, lineHeight: 30}}>: {data.temp}°C</Text>
         </View>
-      </View>
-      <View>
-        <Text>Kết quả kiểm tra:</Text>
       </View>
     </TouchableOpacity>
   );

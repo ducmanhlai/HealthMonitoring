@@ -197,7 +197,7 @@ const Chart = () => {
               drawLabels: true,
               drawGridLines: true,
               position: 'BOTTOM',
-              // ...
+              
             },
             yAxis: {
               drawLabels: true,

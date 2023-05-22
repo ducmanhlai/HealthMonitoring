@@ -113,7 +113,7 @@ function ProfileRegisterScreen({navigation}) {
     }
     if (relativePhone.trim().length != 10) {
       ToastAndroid.show(
-        'Số điện thoại người thân phải đủ 10 số!',
+        'Email người thân không thể bỏ trống!',
         ToastAndroid.SHORT,
       );
       return false;
@@ -315,7 +315,7 @@ function ProfileRegisterScreen({navigation}) {
             </Text>
             <TextInput
               style={styles.inputInfor}
-              placeholder="Nhập số điện thoại người thân"
+              placeholder="Nhập số Email người thân"
               keyboardType="numeric"
               onChangeText={newtext => setRelativePhone(newtext)}
             />
