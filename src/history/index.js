@@ -8,7 +8,6 @@ import {
   View,
   processColor,
   FlatList,
-  SafeAreaView,
   TouchableOpacity,
   TextInput,
   ActivityIndicator, Animated
@@ -25,7 +24,7 @@ import API from '../utils/api';
 import Header from '../utils/components/header';
 import Item from './components/Item';
 import COLOR from '../utils/color';
-import RedictItem from './components/RedictItem';
+import ItemPredict from './components/ItemPredict';
 
 const COLOR_RED = processColor('#FF0000');
 function History({ navigation }) {
@@ -42,6 +41,7 @@ function History({ navigation }) {
   const [dateFrom, setDateFrom] = useState(currentDate);
   const [dateTo, setDateTo] = useState(lastDate);
   const [listHistory, setListHistory] = useState([]);
+  const [listPredict,setListPredict]= useState([]);
   async function getHistory(accessToken) {
     const tmp = await get(API.getHistory, {
       headers: {
@@ -60,13 +60,34 @@ function History({ navigation }) {
       }),
     );
   }
+  async function getHistoryPredict(accessToken){
+    const tmp = await get(API.getHistoryPredict, {
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: accessToken,
+      },
+    });
+    setListPredict(
+      tmp.data.map((item, index) => {
+        return {
+          x: new Date(item.createdAt).getDate(),
+          y: item.heartBeat,
+          oxy: item.oxygen,
+          temp: item.temp,
+          isHealthy: item.isHealthy,
+          date: new Date(item.createdAt).toLocaleDateString(),
+        };
+      }),
+    );
+  }
   useEffect(() => {
     getUser()
       .then(data => {
-        getHistory(JSON.parse(data).accessToken).catch(err => console.log(err));
-        setTimeout(() => {
-          setLoad(false)
-        }, 2500)
+        Promise.all([getHistory(JSON.parse(data).accessToken),getHistoryPredict((JSON.parse(data).accessToken))]).finally(()=>{
+          setTimeout(() => {
+            setLoad(false)
+          }, 2500)
+        })
       })
       .catch(err => console.log(err));
   }, []);
@@ -140,7 +161,7 @@ function History({ navigation }) {
           { oxy: 0, x: 0, y: 0 },
         ),
       };
-      // console.log('newElement: ', newElement);
+
       return {
         date: newElement.date,
         oxy: Math.trunc(newElement.values.oxy / len),
@@ -273,7 +294,6 @@ function History({ navigation }) {
     const opacity = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(50)).current;
     const rotateX = useRef(new Animated.Value(90)).current;
-
     useEffect(() => {
       Animated.stagger(50, [
         Animated.timing(opacity, {
@@ -307,7 +327,7 @@ function History({ navigation }) {
           data={joinByDate().filter(item => {
             return item.isShow;
           })}
-          style={{ height: '100%', width: '80%', backgroundColor: '#F5FCFF' }}
+          style={{ height: '100%', width: '95%', backgroundColor: '#F5FCFF' }}
           contentContainerStyle={{ flexGrow: 10 }}
           scrollEnabled={true}
           renderItem={(item, index) => (
@@ -328,50 +348,52 @@ function History({ navigation }) {
       </View>
     )
   }
-  // function ListRedictHistory() {
-  //   return (
-  //     <SafeAreaView
-  //       style={{
-  //         width: '100%',
-  //         flex: 3,
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         alignSelf: 'center',
-  //         backgroundColor: '#F5FCFF',
-  //       }}>
-  //       <FlatList
-  //           data={joinByDate().filter(item => {
-  //             return item.isShow;
-  //           })}
-  //           style={{
-  //             height: '100%',
-  //             width: '95%',
-  //             marginLeft: 10,
-  //             marginRight: 10,
-  //             backgroundColor: '#F5FCFF',
-  //           }}
-  //           contentContainerStyle={{ flexGrow: 10 }}
-  //           scrollEnabled={true}
-  //           renderItem={item => RedictItem(item)}
-  //           ListEmptyComponent={
-  //             <View
-  //               style={{
-  //                 justifyContent: 'center',
-  //                 alignItems: 'center',
-  //                 height: '100%',
-  //                 width: '100%',
-  //               }}>
-  //               <Text style={{ color: 'black', fontSize: 18 }}>
-  //                 Không có dữ liệu
-  //               </Text>
-  //             </View>
-  //           }></FlatList>
-  //     </SafeAreaView>
-  //   );
-  // }
-  function ListPredictHistory() {
-    return <View>
 
+  function ListPredictHistory() {
+    const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+    const opacity = useRef(new Animated.Value(0)).current;
+    const translateY = useRef(new Animated.Value(50)).current;
+    const rotateX = useRef(new Animated.Value(90)).current;
+    useEffect(() => {
+      Animated.stagger(50, [
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 350,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotateX, {
+          toValue: 0,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, []);
+    return <View>
+       <AnimatedFlatList
+          data={listPredict}
+          style={{ height: '100%', width: '95%', backgroundColor: '#F5FCFF' }}
+          contentContainerStyle={{ flexGrow: 10 }}
+          scrollEnabled={true}
+          renderItem={(item, index) => (
+            <Animated.View
+              style={{
+                opacity,
+                transform: [{ translateY }, {
+                  rotateX: rotateX.interpolate({
+                    inputRange: [0, 90],
+                    outputRange: ['0deg', '90deg'],
+                  })
+                }],
+              }}
+            >{ItemPredict(item)}</Animated.View>
+          )}
+
+        ></AnimatedFlatList>
     </View>
   }
 }

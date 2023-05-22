@@ -1,12 +1,11 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {SafeAreaView, Text, View, Dimensions} from 'react-native';
+import {SafeAreaView, Text, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {LineChart} from 'react-native-charts-wrapper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../utils/components/header';
 import styles from './style';
-import {MenuProvider} from 'react-native-popup-menu';
 import {processColor} from 'react-native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
@@ -14,13 +13,13 @@ import COLOR from '../utils/color';
 import {get} from '../service/index';
 import API from '../utils/api';
 import {debounce} from 'lodash';
+import {AppContext} from '../../App';
 const firebaseConfig = {
   apiKey: 'AIzaSyD8f6u7pcZS96aDABfvlVB06B4PVw5CUQY',
   databaseURL: 'https://fir-authall-37df8-default-rtdb.firebaseio.com',
   authDomain: 'fir-authall-37df8.firebaseapp.com',
   projectId: 'fir-authall-37df8',
   storageBucket: 'fir-authall-37df8.appspot.com',
-  // messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
   appId: '1:836486241957:android:fe35f126178e6b157d374c',
 };
 
@@ -40,9 +39,10 @@ function HomeScreen({navigation}) {
 
 function Moniter() {
   const [connect, setConnect] = useState(0);
-  const [spo2, setSpo2] = useState(0);
-  const [bmp, setBMP] = useState(0);
-  const [temp, setTemp] = useState(0);
+  // const [spo2, setSpo2] = useState(0);
+  // const [bmp, setBMP] = useState(0);
+  // const [temp, setTemp] = useState(0);
+  const {spo2, setSpo2, bmp, setBMP, temp, setTemp} = useContext(AppContext);
   useEffect(() => {
     const dbRef = firebase.database().ref('test/led');
     dbRef.on('value', snapshot => {
@@ -133,6 +133,7 @@ const Chart = () => {
   useEffect(() => {
     (async () => {
       const user = JSON.parse(await getUser());
+      console.log('user: ', user);
       const tmp = await get(API.getNearest, {
         headers: {
           'Content-Type': 'application/json',

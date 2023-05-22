@@ -90,8 +90,8 @@ function ProfileRegisterScreen({navigation}) {
 
     const today = moment(new Date());
 
-    if (moment(date).diff(today, 'days') > -5 * 365) {
-      ToastAndroid.show('Tối thiểu 5 tuổi!', ToastAndroid.SHORT);
+    if (moment(date).diff(today, 'days') >= -15 * 365) {
+      ToastAndroid.show('Tối thiểu 15 tuổi!', ToastAndroid.SHORT);
       return false;
     }
 
@@ -111,6 +111,7 @@ function ProfileRegisterScreen({navigation}) {
       );
       return false;
     }
+
     if (relativePhone.trim().length != 10) {
       ToastAndroid.show(
         'Email người thân không thể bỏ trống!',
@@ -118,6 +119,7 @@ function ProfileRegisterScreen({navigation}) {
       );
       return false;
     }
+
     if (yourPhone.trim() == relativePhone.trim()) {
       ToastAndroid.show(
         'Số điện thoại cá nhân và số điện người thân phải khác nhau!',
@@ -170,8 +172,8 @@ function ProfileRegisterScreen({navigation}) {
     }
   }
 
-  const takePicture = () => {
-    requestCameraPermission();
+  const takePicture = async () => {
+    await requestCameraPermission();
     const options = {
       title: 'Chọn ảnh',
       storageOptions: {
@@ -310,12 +312,10 @@ function ProfileRegisterScreen({navigation}) {
             />
           </View>
           <View style={styles.viewInputInfor2}>
-            <Text style={styles.txtTitleInpurInfor}>
-              Số điện thoại (người thân)
-            </Text>
+            <Text style={styles.txtTitleInpurInfor}>Email (người thân)</Text>
             <TextInput
               style={styles.inputInfor}
-              placeholder="Nhập số Email người thân"
+              placeholder="Nhập số email người thân"
               keyboardType="numeric"
               onChangeText={newtext => setRelativePhone(newtext)}
             />
