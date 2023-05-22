@@ -233,6 +233,7 @@ function ProfileScreen({navigation}) {
               weight: weight,
               accessToken: user.accessToken,
               refreshToken: user.refreshToken,
+              idAccount: user.idAccount,
             };
 
             //update user in side client

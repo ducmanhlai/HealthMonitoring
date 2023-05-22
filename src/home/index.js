@@ -40,44 +40,44 @@ function HomeScreen({navigation}) {
 
 function Moniter() {
   const [connect, setConnect] = useState(0);
+  const [check, setCheck] = useState(false);
   // const [spo2, setSpo2] = useState(0);
   // const [bmp, setBMP] = useState(0);
   // const [temp, setTemp] = useState(0);
-  const {spo2, setSpo2, bmp, setBMP, temp, setTemp} = useContext(AppContext);
-  useEffect(async () => {
+  const {spo2, setSpo2, bmp, setBMP, temp, setTemp, user} =
+    useContext(AppContext);
+  useEffect(() => {
     const dbRef = firebase.database().ref('test/led');
     dbRef.on('value', snapshot => {
       const newData = snapshot.val();
       dbRef.set(0);
       setConnect(newData);
       handleSearch(connect);
+      // console.log(user.idAccount);
+      // (async () => await saveData())().catch(err => console.log(err));
     });
 
     const dbRef2 = firebase.database().ref('test/spo2');
     dbRef2.on('value', snapshot => {
       const newData = snapshot.val();
       setSpo2(newData);
+      setCheck(true);
     });
 
     const dbRef3 = firebase.database().ref('test/bmp');
     dbRef3.on('value', snapshot => {
       const newData = snapshot.val();
       setBMP(newData);
+      setCheck(true);
     });
-
-    const handleSearch = debounce(value => {
-      // Thực hiện logic tìm kiếm hoặc xử lý dữ liệu tại đây
-      console.log('Searching for:', value);
-      setConnect(0);
-    }, 5000);
 
     const dbRef4 = firebase.database().ref('test/temp');
     dbRef4.on('value', snapshot => {
       const newData = snapshot.val();
       setTemp(newData);
+      setCheck(true);
     });
 
-    await saveData();
     // Return a cleanup function to remove the listener when the component unmounts
     return () => {
       dbRef.off('value');
@@ -87,12 +87,26 @@ function Moniter() {
     };
   }, [firebase]);
 
+  const handleSearch = debounce(value => {
+    // Thực hiện logic tìm kiếm hoặc xử lý dữ liệu tại đây
+    console.log('Searching for:', value);
+    setConnect(0);
+  }, 5000);
+
+  useEffect(() => {
+    if (check == true && connect == true) {
+      setCheck(false);
+      (async () => await saveData())().catch(err => console.log(err));
+    }
+  }, [check]);
+
   const saveData = async () => {
+    console.log('call');
     try {
       const response = await request.postPrivate(
-        API,
+        API.createData,
         {
-          id: user.id,
+          id: user.idAccount,
           heartRate: bmp,
           SpO2: spo2,
           temp: temp,
@@ -155,7 +169,7 @@ const Chart = () => {
   useEffect(() => {
     (async () => {
       const user = JSON.parse(await getUser());
-      console.log('user: ', user);
+
       const tmp = await get(API.getNearest, {
         headers: {
           'Content-Type': 'application/json',
@@ -220,7 +234,6 @@ const Chart = () => {
               drawLabels: true,
               drawGridLines: true,
               position: 'BOTTOM',
-              
             },
             yAxis: {
               drawLabels: true,

@@ -8,7 +8,7 @@ const API = {
   getHistory: '/history/get',
   getNearest: '/history/get/nearest',
   predict: '/api/predict/data',
-  createDate: '/data/create',
+  createData: '/data/create',
   getHistoryPredict: '/history/get/predict',
 };
 

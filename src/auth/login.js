@@ -64,7 +64,7 @@ function LoginScreen({navigation}) {
             id: account.userInfo['_id'],
             name: account.userInfo.name,
             imageUrl: account.userInfo.imageUrl,
-            idInfo:account.userInfo,
+            idInfo: account.userInfo,
             gender: account.userInfo.gender,
             birthDay: account.userInfo.birthDay,
             phoneNumber: account.userInfo.phoneNumber,
@@ -73,6 +73,7 @@ function LoginScreen({navigation}) {
             weight: account.userInfo.weight,
             accessToken: response.headers.authorization,
             refreshToken: response.data.data.refreshToken,
+            idAccount: account._id,
           };
 
           setIsLogin(true);
