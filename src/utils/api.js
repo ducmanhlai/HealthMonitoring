@@ -5,10 +5,11 @@ const API = {
   refeshToken: '/account/refresh-token',
   changPassword: '/account/change-password',
   getToken: '/account/token',
-  getHistory:'/history/get',
-  getNearest:'/history/get/nearest',
-  predict:'/api/predict/data',
-  createDate:'/data/create',
+  getHistory: '/history/get',
+  getNearest: '/history/get/nearest',
+  predict: '/api/predict/data',
+  createDate: '/data/create',
+  getHistoryPredict: '/history/get/predict',
 };
 
 export default API;

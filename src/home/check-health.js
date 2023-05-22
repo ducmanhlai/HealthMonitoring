@@ -273,10 +273,13 @@ const HealthCheck = ({ showHealthCheck, setShowHealthCheck, predict }) => {
         </Text>
         <Text style={styles.healthCheckContent}>Cao nhất:110</Text>
       </View>
+      <View style={{flexDirection:'row'}}>
+        <Text style={styles.healthCheckTitle}>
+          Nhiệt độ(Temp): {Number(temp)}</Text>
+        <Text style={[styles.healthCheckTitle, { lineHeight: 15,left:-38,fontSize:14 }]}>o</Text>
+        <Text style={[styles.healthCheckTitle,{left:-78}]}>C</Text>
+      </View>
 
-      <Text style={styles.healthCheckTitle}>
-        Nhiệt độ(Temp): {Number(temp)} *C
-      </Text>
       <Ruler
         value={temp}
         normalStart={36.3}

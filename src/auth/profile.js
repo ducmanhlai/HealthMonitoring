@@ -98,8 +98,8 @@ function ProfileScreen({navigation}) {
 
     const today = moment(new Date());
 
-    if (moment(date).diff(today, 'days') > -5 * 365) {
-      ToastAndroid.show('Tối thiểu 5 tuổi!', ToastAndroid.SHORT);
+    if (moment(date).diff(today, 'days') >= -15 * 365) {
+      ToastAndroid.show('Tối thiểu 15 tuổi!', ToastAndroid.SHORT);
       return false;
     }
 

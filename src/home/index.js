@@ -1,12 +1,11 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {SafeAreaView, Text, View, Dimensions} from 'react-native';
+import {SafeAreaView, Text, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {LineChart} from 'react-native-charts-wrapper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../utils/components/header';
 import styles from './style';
-import {MenuProvider} from 'react-native-popup-menu';
 import {processColor} from 'react-native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
@@ -22,7 +21,6 @@ const firebaseConfig = {
   authDomain: 'fir-authall-37df8.firebaseapp.com',
   projectId: 'fir-authall-37df8',
   storageBucket: 'fir-authall-37df8.appspot.com',
-  // messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
   appId: '1:836486241957:android:fe35f126178e6b157d374c',
 };
 
@@ -222,7 +220,7 @@ const Chart = () => {
               drawLabels: true,
               drawGridLines: true,
               position: 'BOTTOM',
-              // ...
+              
             },
             yAxis: {
               drawLabels: true,
