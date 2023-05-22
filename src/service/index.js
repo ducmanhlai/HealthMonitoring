@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const request = axios.create({
   baseURL: 'https://hethongnhung.azurewebsites.net/',
+  // baseURL: 'http://192.168.43.23:3000',
+
   responseType: 'json',
   withCredentials: true,
 });
@@ -21,7 +23,6 @@ export const post = async (path, options = {}) => {
       },
       data: options,
     });
-    console.log('result: ', result);
     return result;
   } catch (error) {
     console.log(error);
