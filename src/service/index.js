@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const request = axios.create({
-  // baseURL: 'https://hethongnhung.azurewebsites.net/',
-  baseURL: 'http://192.168.1.20:3000',
+  baseURL: 'https://hethongnhung.azurewebsites.net/',
   responseType: 'json',
   withCredentials: true,
 });

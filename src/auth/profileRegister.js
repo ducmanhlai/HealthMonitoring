@@ -90,8 +90,8 @@ function ProfileRegisterScreen({navigation}) {
 
     const today = moment(new Date());
 
-    if (moment(date).diff(today, 'days') > -5 * 365) {
-      ToastAndroid.show('Tối thiểu 5 tuổi!', ToastAndroid.SHORT);
+    if (moment(date).diff(today, 'days') >= -15 * 365) {
+      ToastAndroid.show('Tối thiểu 15 tuổi!', ToastAndroid.SHORT);
       return false;
     }
 
@@ -114,7 +114,7 @@ function ProfileRegisterScreen({navigation}) {
 
     if (relativePhone.trim().length != 10) {
       ToastAndroid.show(
-        'Số điện thoại người thân phải đủ 10 số!',
+        'Email người thân không thể bỏ trống!',
         ToastAndroid.SHORT,
       );
       return false;
