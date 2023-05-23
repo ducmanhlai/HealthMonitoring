@@ -92,13 +92,13 @@ function Moniter() {
     // Thực hiện logic tìm kiếm hoặc xử lý dữ liệu tại đây
     console.log('Searching for:', value);
     setConnect(0);
-  }, 5000);
+  }, 10000);
 
   useEffect(() => {
     if (check == true && connect == true) {
-      if (bmp > 100 || bmp < 60 || spo2 < 90 || temp < 36.3 || temp > 37.5) {
-        sendNotification();
-      }
+      // if (bmp > 100 || bmp < 60 || spo2 < 90 || temp < 36.3 || temp > 37.5) {
+      //   sendNotification();
+      // }
       setCheck(false);
       (async () => await saveData())().catch(err => console.log(err));
     }
@@ -177,7 +177,7 @@ function Moniter() {
           <View style={styles.infoContainer}>
             <View style={styles.infoItem}>
               <FontAwesome5 name="temperature-low" style={styles.infoIcon} />
-              <Text style={styles.infoText}>{temp}°C</Text>
+              <Text style={styles.infoText}>{temp.toFixed(1)}°C</Text>
             </View>
             <View style={styles.infoItem}>
               <FontAwesome5 name="lungs" style={styles.infoIcon} />
