@@ -243,35 +243,35 @@ const HealthCheck = ({ showHealthCheck, setShowHealthCheck, predict }) => {
       <Text style={styles.healthCheckTitle}>Nhịp tim(BPM): {bmp} bmp</Text>
       <Ruler
         value={bmp}
-        normalStart={36}
-        normalEnd={37.5}
-        first={34}
-        last={39}
+        normalStart={60}
+        normalEnd={120}
+        first={0}
+        last={180}
       />
       <View style={styles.healthCheckContentContainer}>
-        <Text style={styles.healthCheckContent}>Thấp nhất: 96</Text>
+        <Text style={styles.healthCheckContent}>Thấp nhất: 60</Text>
         <Text
           style={[styles.healthCheckContent, styles.healthCheckContentSpecial]}>
-          Trung bình:102
+          Trung bình: 90
         </Text>
-        <Text style={styles.healthCheckContent}>Cao nhất:110</Text>
+        <Text style={styles.healthCheckContent}>Cao nhất: 120</Text>
       </View>
 
       <Text style={styles.healthCheckTitle}>Nồng độ oxy(SpO2): {spo2} % </Text>
       <Ruler
         value={spo2}
-        normalStart={36}
-        normalEnd={37.5}
-        first={34}
-        last={39}
+        normalStart={90}
+        normalEnd={100}
+        first={80}
+        last={110}
       />
       <View style={styles.healthCheckContentContainer}>
-        <Text style={styles.healthCheckContent}>Thấp nhất: 96</Text>
+        <Text style={styles.healthCheckContent}>Thấp nhất: 90</Text>
         <Text
           style={[styles.healthCheckContent, styles.healthCheckContentSpecial]}>
-          Trung bình:102
+          Trung bình: 95
         </Text>
-        <Text style={styles.healthCheckContent}>Cao nhất:110</Text>
+        <Text style={styles.healthCheckContent}>Cao nhất:100</Text>
       </View>
       <View style={{flexDirection:'row'}}>
         <Text style={styles.healthCheckTitle}>
@@ -292,12 +292,12 @@ const HealthCheck = ({ showHealthCheck, setShowHealthCheck, predict }) => {
           styles.healthCheckContentContainer,
           { justifyContent: 'space-around' },
         ]}>
-        <Text style={styles.healthCheckContent}>Thấp nhất: 96</Text>
+        <Text style={styles.healthCheckContent}>Thấp nhất: 36.9</Text>
         <Text
           style={[styles.healthCheckContent, styles.healthCheckContentSpecial]}>
-          Trung bình:37
+          Trung bình: 
         </Text>
-        <Text style={styles.healthCheckContent}>Thấp nhất: 96</Text>
+        <Text style={styles.healthCheckContent}>Cao nhất: 37.5</Text>
       </View>
       <Text style={{ textAlign: 'center', marginTop: 5, fontSize: 22 }}>
         Đánh giá sức khỏe:
@@ -353,7 +353,7 @@ const Ruler = ({ value, normalStart, normalEnd, first = 34, last = 39 }) => {
           styles.rulerSection,
           { backgroundColor: 'yellow', width: sectionWidth },
         ]}>
-        {value <= 36 && (
+        {value <= normalStart && (
           <Text style={[styles.arrow, { left: arrowLeft(value) }]}>▼</Text>
         )}
       </View>
@@ -362,7 +362,7 @@ const Ruler = ({ value, normalStart, normalEnd, first = 34, last = 39 }) => {
           styles.rulerSection,
           { backgroundColor: 'green', width: sectionWidth },
         ]}>
-        {value > 36 && value < 37.5 && (
+        {value > normalStart && value < normalEnd && (
           <Text style={[styles.arrow, { left: arrowLeft(value) }]}>▼</Text>
         )}
       </View>
@@ -371,7 +371,7 @@ const Ruler = ({ value, normalStart, normalEnd, first = 34, last = 39 }) => {
           styles.rulerSection,
           { backgroundColor: 'red', width: sectionWidth },
         ]}>
-        {value >= 37.5 && (
+        {value >= normalEnd && (
           <Text style={[styles.arrow, { left: arrowLeft(value) }]}>▼</Text>
         )}
       </View>
