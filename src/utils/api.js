@@ -10,6 +10,7 @@ const API = {
   predict: '/api/predict/data',
   createData: '/data/create',
   getHistoryPredict: '/history/get/predict',
+  sendNotification: '/site/sendNotification',
 };
 
 export default API;
