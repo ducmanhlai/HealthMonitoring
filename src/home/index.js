@@ -41,6 +41,7 @@ function HomeScreen({navigation}) {
 function Moniter() {
   const [connect, setConnect] = useState(0);
   const [check, setCheck] = useState(false);
+  const [textNoti, setTextNoti] = useState('');
   // const [spo2, setSpo2] = useState(0);
   // const [bmp, setBMP] = useState(0);
   // const [temp, setTemp] = useState(0);
@@ -95,10 +96,35 @@ function Moniter() {
 
   useEffect(() => {
     if (check == true && connect == true) {
+      if (bmp > 100 || bmp < 60 || spo2 < 90 || temp < 36.3 || temp > 37.5) {
+        sendNotification();
+      }
       setCheck(false);
       (async () => await saveData())().catch(err => console.log(err));
     }
   }, [check]);
+
+  const sendNotification = async () => {
+    try {
+      let response = await request.post(API.sendNotification, {
+        username: user.email,
+        bmp: bmp,
+        spo2: spo2,
+        temp: temp,
+        text: textNoti,
+        dateTest: new Date(),
+      });
+
+      if (response.data.status == true) {
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      } else {
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error);
+      ToastAndroid.show(error.message, ToastAndroid.SHORT);
+    }
+  };
 
   const saveData = async () => {
     console.log('call');
