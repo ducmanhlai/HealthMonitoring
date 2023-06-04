@@ -203,7 +203,6 @@ const Chart = () => {
   useEffect(() => {
     (async () => {
       const user = JSON.parse(await getUser());
-
       const tmp = await get(API.getNearest, {
         headers: {
           'Content-Type': 'application/json',
@@ -221,16 +220,16 @@ const Chart = () => {
       setDataHeart(
         tmp.data.map((item, index) => {
           return {
-            x: Number(item.hour),
-            y: Math.round(item.heartRate),
+            x: Number(item.hour)||0,
+            y: Math.round(item.heartRate)||0,
           };
         }),
       );
       setDataSpO2(
         tmp.data.map((item, index) => {
           return {
-            x: Number(item.hour),
-            y: Math.round(item.spO2),
+            x: Number(item.hour)||0,
+            y: Math.round(item.spO2)||0,
           };
         }),
       );
