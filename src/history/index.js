@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
-import { useState } from 'react';
-import { useEffect, useRef } from 'react';
+import {useState} from 'react';
+import {useEffect, useRef} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,16 +10,17 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
-  ActivityIndicator, Animated
+  ActivityIndicator,
+  Animated,
 } from 'react-native';
-import { Layout } from 'react-native-reanimated';
+import {Layout} from 'react-native-reanimated';
 import moment from 'moment';
 import Entypo from 'react-native-vector-icons/Entypo';
 import DatePicker from 'react-native-date-picker';
-import { LineChart } from 'react-native-charts-wrapper';
+import {LineChart} from 'react-native-charts-wrapper';
 import SwitchSelector from 'react-native-switch-selector';
-import { Dimensions } from 'react-native';
-import { get } from '../service';
+import {Dimensions} from 'react-native';
+import {get} from '../service';
 import API from '../utils/api';
 import Header from '../utils/components/header';
 import Item from './components/Item';
@@ -27,7 +28,7 @@ import COLOR from '../utils/color';
 import ItemPredict from './components/ItemPredict';
 
 const COLOR_RED = processColor('#FF0000');
-function History({ navigation }) {
+function History({navigation}) {
   const [history, setHistory] = useState(true);
   const handleButtonClick = value => {
     setHistory(value);
@@ -37,11 +38,11 @@ function History({ navigation }) {
   const [openTo, setOpenTo] = useState(false);
   const currentDate = new Date();
   const lastDate = new Date();
-  lastDate.setDate(currentDate.getDate() + 14)
+  lastDate.setDate(currentDate.getDate() + 14);
   const [dateFrom, setDateFrom] = useState(currentDate);
   const [dateTo, setDateTo] = useState(lastDate);
   const [listHistory, setListHistory] = useState([]);
-  const [listPredict,setListPredict]= useState([]);
+  const [listPredict, setListPredict] = useState([]);
   async function getHistory(accessToken) {
     const tmp = await get(API.getHistory, {
       headers: {
@@ -60,7 +61,7 @@ function History({ navigation }) {
       }),
     );
   }
-  async function getHistoryPredict(accessToken){
+  async function getHistoryPredict(accessToken) {
     const tmp = await get(API.getHistoryPredict, {
       headers: {
         'Content-Type': 'application/json',
@@ -83,18 +84,21 @@ function History({ navigation }) {
   useEffect(() => {
     getUser()
       .then(data => {
-        Promise.all([getHistory(JSON.parse(data).accessToken),getHistoryPredict((JSON.parse(data).accessToken))]).finally(()=>{
+        Promise.all([
+          getHistory(JSON.parse(data).accessToken),
+          getHistoryPredict(JSON.parse(data).accessToken),
+        ]).finally(() => {
           setTimeout(() => {
-            setLoad(false)
-          }, 2500)
-        })
+            setLoad(false);
+          }, 2500);
+        });
       })
       .catch(err => console.log(err));
   }, []);
   return (
-    <View style={{ height: '100%', flex: 1, flexDirection: 'column' }}>
+    <View style={{height: '100%', flex: 1, flexDirection: 'column'}}>
       <Header navigation={navigation} />
-      <View style={{ paddingHorizontal: 40 }}>
+      <View style={{paddingHorizontal: 40}}>
         <SwitchSelector
           initial={0}
           onPress={value => handleButtonClick(value)}
@@ -104,21 +108,24 @@ function History({ navigation }) {
           borderColor={COLOR.primary}
           hasPadding
           options={[
-            { label: 'Lịch sử đo nhịp tim', value: true },
-            { label: 'Lịch sử kiểm tra sức khỏe', value: false },
+            {label: 'Lịch sử đo nhịp tim', value: true},
+            {label: 'Lịch sử kiểm tra sức khỏe', value: false},
           ]}
           testID="gender-switch-selector"
           accessibilityLabel="gender-switch-selector"
         />
       </View>
       {history ? (
-        load ? <View style={styles.activityIndicatorContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View> :
-          <View style={{ height: '100%', flex: 1, flexDirection: 'column' }}>
+        load ? (
+          <View style={styles.activityIndicatorContainer}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : (
+          <View style={{height: '100%', flex: 1, flexDirection: 'column'}}>
             <Chart />
             <ListHistory />
           </View>
+        )
       ) : (
         <View
           style={{
@@ -128,22 +135,21 @@ function History({ navigation }) {
           }}>
           <ListPredictHistory />
         </View>
-      )
-      }
-    </View >
+      )}
+    </View>
   );
   function joinByDate() {
     const result = {};
     var resultList = [];
     listHistory.forEach(item => {
-      const { date, ...rest } = item;
+      const {date, ...rest} = item;
       if (!result[date]) {
         result[date] = [rest];
       } else {
         result[date].push(rest);
       }
       resultList = Object.entries(result).map(([date, groupedObjects]) => {
-        return { date, values: groupedObjects };
+        return {date, values: groupedObjects};
       });
     });
 
@@ -158,7 +164,7 @@ function History({ navigation }) {
             acc.y += cur.y;
             return acc;
           },
-          { oxy: 0, x: 0, y: 0 },
+          {oxy: 0, x: 0, y: 0},
         ),
       };
 
@@ -189,15 +195,18 @@ function History({ navigation }) {
           duration: 500,
           useNativeDriver: true,
         }),
-
       ]).start();
     }, []);
     return (
-      <View style={[{ marginTop: 10 },]}>
-        <Animated.View style={[styles.container_chart, {
-          opacity,
-          transform: [{ translateY }],
-        }]}>
+      <View style={[{marginTop: 10}]}>
+        <Animated.View
+          style={[
+            styles.container_chart,
+            {
+              opacity,
+              transform: [{translateY}],
+            },
+          ]}>
           <LineChart
             style={styles.chart}
             data={{
@@ -227,18 +236,18 @@ function History({ navigation }) {
               position: 'BOTTOM',
               valueFormatter: '###',
             }}
-            chartDescription={{ text: '' }}
+            chartDescription={{text: ''}}
             autoScaleMinMaxEnabled={true}
           />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <Text style={{ marginLeft: 20, marginTop: 13, color: 'black' }}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            <Text style={{marginLeft: 20, marginTop: 13, color: 'black'}}>
               Dữ liệu từ
             </Text>
             <TouchableOpacity onPress={() => setOpenFrom(true)}>
               <View>
                 <TextInput
                   value={moment(dateFrom).format('DD/MM/YYYY')} // Display selected date in TextInput
-                  style={{ color: 'black' }}
+                  style={{color: 'black'}}
                   editable={false} // Disable editing of TextInput
                 />
                 <Entypo name="calendar" size={30} color={COLOR.sencondary} />
@@ -257,14 +266,14 @@ function History({ navigation }) {
                 setOpenFrom(false);
               }}
             />
-            <Text style={{ marginLeft: 20, marginTop: 13, color: 'black' }}>
+            <Text style={{marginLeft: 20, marginTop: 13, color: 'black'}}>
               Đến
             </Text>
             <TouchableOpacity onPress={() => setOpenTo(true)}>
               <View>
                 <TextInput
                   value={moment(dateTo).format('DD/MM/YYYY')} // Display selected date in TextInput
-                  style={{ color: 'black' }}
+                  style={{color: 'black'}}
                   editable={false} // Disable editing of TextInput
                 />
                 <Entypo name="calendar" size={30} color={COLOR.sencondary} />
@@ -327,26 +336,28 @@ function History({ navigation }) {
           data={joinByDate().filter(item => {
             return item.isShow;
           })}
-          style={{ height: '100%', width: '95%', backgroundColor: '#F5FCFF' }}
-          contentContainerStyle={{ flexGrow: 10 }}
+          style={{height: '100%', width: '95%', backgroundColor: '#F5FCFF'}}
+          contentContainerStyle={{flexGrow: 10}}
           scrollEnabled={true}
           renderItem={(item, index) => (
             <Animated.View
               style={{
                 opacity,
-                transform: [{ translateY }, {
-                  rotateX: rotateX.interpolate({
-                    inputRange: [0, 90],
-                    outputRange: ['0deg', '90deg'],
-                  })
-                }],
-              }}
-            >{Item(item)}</Animated.View>
-          )}
-
-        ></AnimatedFlatList>
+                transform: [
+                  {translateY},
+                  {
+                    rotateX: rotateX.interpolate({
+                      inputRange: [0, 90],
+                      outputRange: ['0deg', '90deg'],
+                    }),
+                  },
+                ],
+              }}>
+              {Item(item)}
+            </Animated.View>
+          )}></AnimatedFlatList>
       </View>
-    )
+    );
   }
 
   function ListPredictHistory() {
@@ -373,28 +384,32 @@ function History({ navigation }) {
         }),
       ]).start();
     }, []);
-    return <View>
-       <AnimatedFlatList
+    return (
+      <View>
+        <AnimatedFlatList
           data={listPredict}
-          style={{ height: '100%', width: '95%', backgroundColor: '#F5FCFF' }}
-          contentContainerStyle={{ flexGrow: 10 }}
+          style={{height: '100%', width: '95%', backgroundColor: '#F5FCFF'}}
+          contentContainerStyle={{flexGrow: 10}}
           scrollEnabled={true}
           renderItem={(item, index) => (
             <Animated.View
               style={{
                 opacity,
-                transform: [{ translateY }, {
-                  rotateX: rotateX.interpolate({
-                    inputRange: [0, 90],
-                    outputRange: ['0deg', '90deg'],
-                  })
-                }],
-              }}
-            >{ItemPredict(item)}</Animated.View>
-          )}
-
-        ></AnimatedFlatList>
-    </View>
+                transform: [
+                  {translateY},
+                  {
+                    rotateX: rotateX.interpolate({
+                      inputRange: [0, 90],
+                      outputRange: ['0deg', '90deg'],
+                    }),
+                  },
+                ],
+              }}>
+              {ItemPredict(item)}
+            </Animated.View>
+          )}></AnimatedFlatList>
+      </View>
+    );
   }
 }
 
@@ -412,15 +427,15 @@ const styles = StyleSheet.create({
   },
   activityIndicatorContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 10,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });
 const compareDates = (d1, d2) => {
   let tmp = d1.split('/');
-  let date1 = new Date(tmp[2], tmp[1] - 1, tmp[0]);
+  let date1 = new Date(tmp[2], tmp[0] - 1, tmp[1]);
   date1 = date1.getTime();
   let date2 = new Date(d2).getTime();
   if (date1 <= date2) {
