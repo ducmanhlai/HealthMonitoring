@@ -16,7 +16,7 @@ import { Layout } from 'react-native-reanimated';
 import moment from 'moment';
 import Entypo from 'react-native-vector-icons/Entypo';
 import DatePicker from 'react-native-date-picker';
-import { LineChart } from 'react-native-charts-wrapper';
+import { LineChart,CombinedChart } from 'react-native-charts-wrapper';
 import SwitchSelector from 'react-native-switch-selector';
 import { Dimensions } from 'react-native';
 import { get } from '../service';
@@ -38,10 +38,10 @@ function History({ navigation }) {
   const currentDate = new Date();
   const lastDate = new Date();
   lastDate.setDate(currentDate.getDate() + 14)
-  const [dateFrom, setDateFrom] = useState(currentDate);
+  const [dateFrom, setDateFrom] = useState(new Date(2023,4,23));
   const [dateTo, setDateTo] = useState(lastDate);
   const [listHistory, setListHistory] = useState([]);
-  const [listPredict,setListPredict]= useState([]);
+  const [listPredict, setListPredict] = useState([]);
   async function getHistory(accessToken) {
     const tmp = await get(API.getHistory, {
       headers: {
@@ -60,7 +60,7 @@ function History({ navigation }) {
       }),
     );
   }
-  async function getHistoryPredict(accessToken){
+  async function getHistoryPredict(accessToken) {
     const tmp = await get(API.getHistoryPredict, {
       headers: {
         'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ function History({ navigation }) {
   useEffect(() => {
     getUser()
       .then(data => {
-        Promise.all([getHistory(JSON.parse(data).accessToken),getHistoryPredict((JSON.parse(data).accessToken))]).finally(()=>{
+        Promise.all([getHistory(JSON.parse(data).accessToken), getHistoryPredict((JSON.parse(data).accessToken))]).finally(() => {
           setTimeout(() => {
             setLoad(false)
           }, 2500)
@@ -165,11 +165,10 @@ function History({ navigation }) {
       return {
         date: newElement.date,
         oxy: Math.trunc(newElement.values.oxy / len),
-        x: Math.trunc(newElement.values.x / len),
+        x: new Date( newElement.date.split('/')[2],newElement.date.split('/')[1]-1,newElement.date.split('/')[0]).getTime(),
         y: Math.trunc(newElement.values.y / len),
         isShow:
-          compareDates(newElement.date, dateTo) == -1 &&
-          compareDates(newElement.date, dateFrom) == 1,
+          compareDates(newElement.date, dateFrom, dateTo,)
       };
     });
     return total;
@@ -216,16 +215,29 @@ function History({ navigation }) {
                     color: COLOR_RED,
                     fillColor: COLOR_RED,
                     fillAlpha: 90,
-                    valueFormatter: '###',
+                    granularity: 1,
+                    granularityEnabled: true,
+                    valueFormatter: "###",
+                    scaleEnabled:true
                   },
                 },
               ],
             }}
             xAxis={{
-              granularity: 1,
-              granularityEnabled: true,
-              position: 'BOTTOM',
-              valueFormatter: '###',
+              enabled: true,
+              fontWeight:"bold",
+              textColor: processColor('black'),
+              fontStyle:"italic",
+              fontSize: 12,
+              drawGridLines: true,
+              drawAxisLine: true,
+              position:'BOTTOM',
+              granularityEnabled: false,
+              centerAxisLabels: true,
+              axisLineColor: processColor('white'),
+              axisLineWidth: 1,
+              valueFormatter: 'date',
+              valueFormatterPattern: 'dd MMM'
             }}
             chartDescription={{ text: '' }}
             autoScaleMinMaxEnabled={true}
@@ -343,7 +355,6 @@ function History({ navigation }) {
               }}
             >{Item(item)}</Animated.View>
           )}
-
         ></AnimatedFlatList>
       </View>
     )
@@ -374,26 +385,26 @@ function History({ navigation }) {
       ]).start();
     }, []);
     return <View>
-       <AnimatedFlatList
-          data={listPredict}
-          style={{ height: '100%', width: '95%', backgroundColor: '#F5FCFF' }}
-          contentContainerStyle={{ flexGrow: 10 }}
-          scrollEnabled={true}
-          renderItem={(item, index) => (
-            <Animated.View
-              style={{
-                opacity,
-                transform: [{ translateY }, {
-                  rotateX: rotateX.interpolate({
-                    inputRange: [0, 90],
-                    outputRange: ['0deg', '90deg'],
-                  })
-                }],
-              }}
-            >{ItemPredict(item)}</Animated.View>
-          )}
+      <AnimatedFlatList
+        data={listPredict}
+        style={{ height: '100%', width: '95%', backgroundColor: '#F5FCFF' }}
+        contentContainerStyle={{ flexGrow: 10 }}
+        scrollEnabled={true}
+        renderItem={(item, index) => (
+          <Animated.View
+            style={{
+              opacity,
+              transform: [{ translateY }, {
+                rotateX: rotateX.interpolate({
+                  inputRange: [0, 90],
+                  outputRange: ['0deg', '90deg'],
+                })
+              }],
+            }}
+          >{ItemPredict(item)}</Animated.View>
+        )}
 
-        ></AnimatedFlatList>
+      ></AnimatedFlatList>
     </View>
   }
 }
@@ -418,16 +429,15 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
-const compareDates = (d1, d2) => {
+const compareDates = (d1, d2, d3) => {
   let tmp = d1.split('/');
-  let date1 = new Date(tmp[2], tmp[1] - 1, tmp[0]);
+  let date1 = new Date(tmp[2], tmp[1] - 1, tmp[0], 23, 59);
   date1 = date1.getTime();
   let date2 = new Date(d2).getTime();
-  if (date1 <= date2) {
-    return -1;
-  } else if (date1 >= date2) {
-    return 1;
-  }
+  let date3 = new Date(d3);
+  date3.setDate(d3.getDate()+1)
+  date3= date3.getTime();
+  return (date1 >= date2 && date1 <date3) ? true : false
 };
 
 export default History;

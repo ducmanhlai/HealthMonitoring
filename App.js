@@ -2,7 +2,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import React, {createContext, useState, useEffect} from 'react';
 import HomeNavigation from './src/utils/navigation/home-navigation';
 import {MenuProvider} from 'react-native-popup-menu';
-
 const AppContext = createContext();
 
 const AppContextProvider = ({children}) => {
