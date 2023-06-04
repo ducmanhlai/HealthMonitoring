@@ -96,9 +96,9 @@ function Moniter() {
 
   useEffect(() => {
     if (check == true && connect == true) {
-      // if (bmp > 100 || bmp < 60 || spo2 < 90 || temp < 36.3 || temp > 37.5) {
-      //   sendNotification();
-      // }
+      if (bmp > 100 || bmp < 60 || spo2 < 90 || temp < 36.3 || temp > 37.5) {
+        sendNotification();
+      }
       setCheck(false);
       (async () => await saveData())().catch(err => console.log(err));
     }
@@ -106,13 +106,21 @@ function Moniter() {
 
   const sendNotification = async () => {
     try {
+      const currentDate = new Date();
+
+      // Lấy thời gian hiện tại (theo múi giờ UTC)
+      const utcTime = currentDate.getTime();
+
+      // Tính toán thời gian theo múi giờ GMT+7 (UTC+7)
+      const gmt7Time = utcTime + 7 * 60 * 60 * 1000; // 7 giờ * 60 phút * 60 giây * 1000 milliseconds
+
       let response = await request.post(API.sendNotification, {
         username: user.email,
         bmp: bmp,
         spo2: spo2,
         temp: temp,
         text: textNoti,
-        dateTest: new Date(),
+        dateTest: new Date(gmt7Time),
       });
 
       if (response.data.status == true) {

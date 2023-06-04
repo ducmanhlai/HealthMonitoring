@@ -75,13 +75,20 @@ const Confirm = ({setShowHealthCheck, setPredict}) => {
 
   const sendNotification = async data => {
     try {
+      const currentDate = new Date();
+
+      // Lấy thời gian hiện tại (theo múi giờ UTC)
+      const utcTime = currentDate.getTime();
+
+      // Tính toán thời gian theo múi giờ GMT+7 (UTC+7)
+      const gmt7Time = utcTime + 7 * 60 * 60 * 1000; // 7 giờ * 60 phút * 60 giây * 1000 milliseconds
       let response = await request.post(API.sendNotification, {
         username: user.email,
         bmp: data.dataPredict.bmp,
         spo2: data.dataPredict.spo2,
         temp: data.dataPredict.temp,
         text: data.docterSaid,
-        dateTest: new Date(),
+        dateTest: new Date(gmt7Time),
       });
 
       if (response.data.status == true) {
@@ -293,9 +300,9 @@ const HealthCheck = ({showHealthCheck, setShowHealthCheck, predict}) => {
       <Ruler
         value={bmp}
         normalStart={60}
-        normalEnd={120}
-        first={0}
-        last={180}
+        normalEnd={100}
+        first={20}
+        last={140}
       />
       <View style={styles.healthCheckContentContainer}>
         <Text style={styles.healthCheckContent}>Thấp nhất: 60</Text>
@@ -303,7 +310,7 @@ const HealthCheck = ({showHealthCheck, setShowHealthCheck, predict}) => {
           style={[styles.healthCheckContent, styles.healthCheckContentSpecial]}>
           Trung bình: 90
         </Text>
-        <Text style={styles.healthCheckContent}>Cao nhất: 120</Text>
+        <Text style={styles.healthCheckContent}>Cao nhất: 100</Text>
       </View>
 
       <Text style={styles.healthCheckTitle}>Nồng độ oxy(SpO2): {spo2} % </Text>
@@ -324,7 +331,7 @@ const HealthCheck = ({showHealthCheck, setShowHealthCheck, predict}) => {
       </View>
       <View style={{flexDirection: 'row'}}>
         <Text style={styles.healthCheckTitle}>
-          Nhiệt độ(Temp): {Number(temp)}
+          Nhiệt độ(Temp): {temp.toFixed(1)}
         </Text>
         <Text
           style={[
