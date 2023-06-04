@@ -31,7 +31,7 @@ function HomeTab() {
         options={{
           tabBarLabel: 'Kiểm tra',
           tabBarIcon: ({color, size}) => (
-            <AntDesign name="medicinebox" color={COLOR.pink} size={size} />
+            <AntDesign name="medicinebox" color={color} size={size} />
           ),
         }}
       />
@@ -41,7 +41,7 @@ function HomeTab() {
         options={{
           tabBarLabel: 'Trang chủ',
           tabBarIcon: ({color, size}) => (
-            <AntDesign name="heart" color={COLOR.gray} size={size} />
+            <AntDesign name="heart" color={color} size={size} />
           ),
         }}
       />
@@ -51,7 +51,7 @@ function HomeTab() {
         options={{
           tabBarLabel: 'Lịch sử',
           tabBarIcon: ({color, size}) => (
-            <FontAwesome5 name="history" color={COLOR.gray} size={size} />
+            <FontAwesome5 name="history" color={color} size={size} />
           ),
         }}
       />

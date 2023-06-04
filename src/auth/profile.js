@@ -27,7 +27,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ProfileScreen({navigation}) {
   const {isLogin, setIsLogin, user, setUser} = useContext(AppContext);
-
   const [checked, setChecked] = useState('nam');
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
@@ -41,7 +40,9 @@ function ProfileScreen({navigation}) {
   );
 
   const [responseImage, setResponseImage] = useState(
-    `https://freesvg.org/img/abstract-user-flat-4.png`,
+    isLogin
+      ? user.imageUrl
+      : `https://freesvg.org/img/abstract-user-flat-4.png`,
   );
   const chooseImage = () => {
     let options = {
@@ -97,8 +98,8 @@ function ProfileScreen({navigation}) {
 
     const today = moment(new Date());
 
-    if (moment(date).diff(today, 'days') > -5 * 365) {
-      ToastAndroid.show('Tối thiểu 5 tuổi!', ToastAndroid.SHORT);
+    if (moment(date).diff(today, 'days') >= -15 * 365) {
+      ToastAndroid.show('Tối thiểu 15 tuổi!', ToastAndroid.SHORT);
       return false;
     }
 
@@ -145,6 +146,7 @@ function ProfileScreen({navigation}) {
         console.log('Camera permission granted');
         ToastAndroid.show('Đã cấp quyền truy cập máy ảnh!', ToastAndroid.SHORT);
       } else {
+        console.log(granted);
         console.log('Camera permission denied');
         ToastAndroid.show(
           'Đã từ chối quyền truy cập máy ảnh!',
@@ -157,8 +159,8 @@ function ProfileScreen({navigation}) {
     }
   }
 
-  const takePicture = () => {
-    requestCameraPermission();
+  const takePicture = async () => {
+    await requestCameraPermission();
     const options = {
       title: 'Chọn ảnh',
       storageOptions: {
@@ -229,8 +231,9 @@ function ProfileScreen({navigation}) {
               familyPhoneNumber: relativePhone,
               height: height,
               weight: weight,
-              accessToken: user.authorization,
+              accessToken: user.accessToken,
               refreshToken: user.refreshToken,
+              idAccount: user.idAccount,
             };
 
             //update user in side client
