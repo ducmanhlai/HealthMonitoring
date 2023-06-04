@@ -1,20 +1,20 @@
-import React, {useState, useContext, useEffect} from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { SafeAreaView, Text, View } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {LineChart} from 'react-native-charts-wrapper';
+import { LineChart } from 'react-native-charts-wrapper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../utils/components/header';
 import styles from './style';
-import {processColor} from 'react-native';
+import { processColor } from 'react-native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import COLOR from '../utils/color';
 import * as request from '../service/index';
-import {get} from '../service/index';
+import { get } from '../service/index';
 import API from '../utils/api';
-import {debounce} from 'lodash';
-import {AppContext} from '../../App';
+import { debounce } from 'lodash';
+import { AppContext } from '../../App';
 const firebaseConfig = {
   apiKey: 'AIzaSyD8f6u7pcZS96aDABfvlVB06B4PVw5CUQY',
   databaseURL: 'https://fir-authall-37df8-default-rtdb.firebaseio.com',
@@ -26,7 +26,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-function HomeScreen({navigation}) {
+function HomeScreen({ navigation }) {
   return (
     <SafeAreaView>
       <Header navigation={navigation} />
@@ -45,7 +45,7 @@ function Moniter() {
   // const [spo2, setSpo2] = useState(0);
   // const [bmp, setBMP] = useState(0);
   // const [temp, setTemp] = useState(0);
-  const {spo2, setSpo2, bmp, setBMP, temp, setTemp, user} =
+  const { spo2, setSpo2, bmp, setBMP, temp, setTemp, user } =
     useContext(AppContext);
   useEffect(() => {
     const dbRef = firebase.database().ref('test/led');
@@ -137,7 +137,7 @@ function Moniter() {
           SpO2: spo2,
           temp: temp,
         },
-        {headers: {authorization: user.accessToken}},
+        { headers: { authorization: user.accessToken } },
       );
       if (response.data.status == false) {
         console.log(response.data.message);
@@ -149,11 +149,11 @@ function Moniter() {
 
   return (
     <View style={styles.container}>
-      <View style={{left: -120, flexDirection: 'row'}}>
+      <View style={{ left: -120, flexDirection: 'row' }}>
         <View
           style={[
             styles.circle,
-            {backgroundColor: connect ? COLOR.green : COLOR.pink},
+            { backgroundColor: connect ? COLOR.green : COLOR.pink },
           ]}></View>
         <Text style={styles.statusText}>
           {connect ? 'Kết nối' : 'Mất kết nối'}
@@ -166,7 +166,7 @@ function Moniter() {
               name="heart"
               color="red"
               size={18}
-              style={{textAlign: 'center'}}
+              style={{ textAlign: 'center' }}
             />
             <Text style={styles.heartRateText}>{bmp}</Text>
             <Text style={styles.heartRateUnit}>BPM</Text>
@@ -201,75 +201,74 @@ const Chart = () => {
           authorization: user.accessToken,
         },
       });
-
-      // const tmp = await request.get(API.getNearest, {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     authorization: user.accessToken,
-      //   },
-      // });
-
-      setDataHeart(
-        tmp.data.map((item, index) => {
-          return {
-            x: Number(item.hour)||0,
-            y: Math.round(item.heartRate)||0,
-          };
-        }),
-      );
-      setDataSpO2(
-        tmp.data.map((item, index) => {
-          return {
-            x: Number(item.hour)||0,
-            y: Math.round(item.spO2)||0,
-          };
-        }),
-      );
+      if (tmp.length != 0) {
+        setDataHeart(
+          tmp.data.map((item, index) => {
+            return {
+              x: Number(item.hour) || 0,
+              y: Math.round(item.heartRate) || 0,
+            };
+          }),
+        );
+        setDataSpO2(
+          tmp.data.map((item, index) => {
+            return {
+              x: Number(item.hour) || 0,
+              y: Math.round(item.spO2) || 0,
+            };
+          }),
+        );
+      }
+      console.log(dataHeart.length)
     })().catch(err => console.log(err));
   }, []);
   return (
     <View style={styles.containerChart}>
-      <LineChart
-        legend={{enabled: true}}
-        style={{height: 250}}
-        data={{
-          dataSets: [
-            {
-              values: dataHeart,
-              label: 'Nhịp tim',
-              config: {
-                lineWidth: 2,
-                drawCircles: false,
-                colors: [processColor('blue')],
+      {dataHeart.length == 0 ?
+        <View style={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}><Text>Không có dữ liệu trong 24h</Text></View> :
+        <LineChart
+          legend={{ enabled: true }}
+          style={{ height: 250 }}
+          data={{
+            dataSets: [
+              {
+                values: dataHeart,
+                label: 'Nhịp tim',
+                config: {
+                  lineWidth: 2,
+                  drawCircles: false,
+                  colors: [processColor('blue')],
+                },
+              },
+              {
+                values: dataSpO2,
+                label: 'SpO2',
+                config: {
+                  lineWidth: 2,
+                  drawCircles: false,
+                  colors: [processColor('red')],
+                  borderColor: 'red',
+                },
+              },
+            ],
+            config: {
+              xAxis: {
+                drawLabels: true,
+                drawGridLines: true,
+                position: 'BOTTOM',
+              },
+              yAxis: {
+                drawLabels: true,
+                drawGridLines: true,
               },
             },
-            {
-              values: dataSpO2,
-              label: 'SpO2',
-              config: {
-                lineWidth: 2,
-                drawCircles: false,
-                colors: [processColor('red')],
-                borderColor: 'red',
-              },
-            },
-          ],
-          config: {
-            xAxis: {
-              drawLabels: true,
-              drawGridLines: true,
-              position: 'BOTTOM',
-            },
-            yAxis: {
-              drawLabels: true,
-              drawGridLines: true,
-            },
-          },
-        }}
-        descriptionLabel={'Dữ'}
-        xAxis={{textColor: '#000000', textSize: 16, position: 'BOTTOM'}}
-        yAxis={{left: {textColor: '#000000', textSize: 16}, right: null}}
-      />
+          }}
+          descriptionLabel={'Dữ'}
+          xAxis={{ textColor: '#000000', textSize: 16, position: 'BOTTOM' }}
+          yAxis={{ left: { textColor: '#000000', textSize: 16 }, right: null }}
+        />
+      }
+
     </View>
   );
 };
