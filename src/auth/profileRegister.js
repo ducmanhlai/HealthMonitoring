@@ -114,7 +114,7 @@ function ProfileRegisterScreen({navigation}) {
 
     if (relativePhone.trim().length != 10) {
       ToastAndroid.show(
-        'Email người thân không thể bỏ trống!',
+        'Số điện thoại người thân không thể bỏ trống!',
         ToastAndroid.SHORT,
       );
       return false;
@@ -312,10 +312,10 @@ function ProfileRegisterScreen({navigation}) {
             />
           </View>
           <View style={styles.viewInputInfor2}>
-            <Text style={styles.txtTitleInpurInfor}>Email (người thân)</Text>
+            <Text style={styles.txtTitleInpurInfor}>Số điện thoại(người thân)</Text>
             <TextInput
               style={styles.inputInfor}
-              placeholder="Nhập số email người thân"
+              placeholder="Nhập số điện thoại người thân"
               keyboardType="numeric"
               onChangeText={newtext => setRelativePhone(newtext)}
             />

@@ -90,7 +90,6 @@ def reactNativeArchitectures() {
 
 android {
     ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace "com.healthmonitoringapp"
@@ -111,13 +110,12 @@ android {
         }
     }
     signingConfigs {
-        // debug {
-        //     storeFile file('debug.keystore')
-        //     storePassword 'android'
-        //     keyAlias 'androiddebugkey'
-        //     keyPassword 'android'
-        // }
-
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
          release {
             if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
                 storeFile file(MYAPP_RELEASE_STORE_FILE)
@@ -127,6 +125,7 @@ android {
             }
         }
     }
+   
     buildTypes {
         debug {
             signingConfig signingConfigs.debug

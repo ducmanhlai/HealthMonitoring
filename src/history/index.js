@@ -69,6 +69,7 @@ function History({navigation}) {
         authorization: accessToken,
       },
     });
+    
     setListPredict(
       tmp.data.map((item, index) => {
         return {
@@ -404,7 +405,7 @@ function History({navigation}) {
     return (
       <View>
         <AnimatedFlatList
-          data={listPredict}
+          data={listPredict.sort((a, b) => (a.date > b.date) ? -11 : 1)}
           style={{height: '100%', width: '95%', backgroundColor: '#F5FCFF'}}
           contentContainerStyle={{flexGrow: 10}}
           scrollEnabled={true}
